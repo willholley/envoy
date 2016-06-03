@@ -1,14 +1,19 @@
 language: node_js
+
 node_js:
-  - "stable"
+  - "5"
+
 git:
   depth: 30
+
 sudo:
   false
+
 env:
   global: 
     - secure: "d8ankESjYR+Edd+MNeWNlvqX+YxJJbTHOeRMajmXtoZ5gxES0pftP4J6LPkS0O6HuP4FChZWD2BiIOWR/J5sO0JARBUrFX/M/kKKH9SaIffSijYcmxmdG/w6rReu3eSwTqQ3uS7MYs6/YiY+BIUuBXujIMcUIVJI7CPusIJ/S3s="
     - PORT=8080
     - MBAAS_DATABASE_NAME='mbaas'
+
 script:
   npm run mocha
