@@ -231,3 +231,4 @@ In order to respect groups, the query would have to be modified like so:
 ```
 
 to ensure that the user can only see the documents they are authorised to see. The current implementation only uses auth.users.
+
