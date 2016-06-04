@@ -20,7 +20,7 @@
     "start": "node ./bin/www",
     "jshint": "jshint -c .jshintrc lib/",
     "mocha": "./node_modules/.bin/mocha test -t 20000",
-    "test": "npm run jshint; npm run mocha"
+    "test": "bash scripts/run_couchdb_on_travis.sh; npm run mocha"
   },
   "dependencies": {
     "async": "^1.5.2",
