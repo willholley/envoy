@@ -9,11 +9,15 @@ git:
 sudo:
   false
 
+services:
+  - docker
+
 env:
   global: 
-    - secure: "WC5MSd2qhJ4U//9pEo2n7gQUxg5zBiPMnHA8aeLUWrqb5SvWkWFs8KAx14iZeEcdGHj/VCFm9U9ZEWrEdL0yteBmYYVtNwfoea9sr/tH9w0Ii1iGIObSwwHyeo8Eay4bnuLQTmlz1Js/J9/w9XUwivJwy0YjdINwWQJjFv6YZUZDp0LIpNEHgRHfT3sunuWGBCJnCuJxHnARXWoOT2bn69Jx/GD3bwVVX5nnC4a3rchD0s0bDjx7OPfJv26kjfp+0NfrSKBQGm50nw04gSue6cuDkFZnXzIQpn4DP8Ilwne52II8J4o09osnJHUejEl/mPQGeTy3nA2bCNruWlinvhcGufVYqIfllXb3fATEyhJttQNJ23RY7ZivjysaahruWSluDK/275av3y+Vgc4FCzPyvr9B31wqtSPm3tY/ZBnsj+FYsU8MPRw0dS4IhVjvI6oNOXoUcM8+551CWWFAzqIAnbH0cPTNMTBxPN9wb7Qbxy9Ovum7avxFGgMY7T8PXgDUTchVS9DRwn9dpSu9VS6J0/nBMBpKkVVUqY1PzQuoLqme/glyrKYdmxegI7z5hqesaxxU8a6oq2FUEH6xCobxV6EMbK1UAWtyJ2w00hX/aXlAOonNQRXT8zaO8kPjBHP3NP7cfViMz8bGiZnt5hoNDr2HSn/QbjXkILBC6uw="
-    - PORT=8080
-    - MBAAS_DATABASE_NAME='mbaas'
+  - PORT=8080
+  - MBAAS_DATABASE_NAME='mbaas'
+  matrix:
+  - COUCH_HOST=http://127.0.0.1:3001
 
 script:
-  npm run mocha
+  npm run test
