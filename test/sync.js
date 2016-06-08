@@ -26,10 +26,13 @@ describe('test single user sync', function () {
     var remoteURL = testUtils.url(username, auth.sha1(username));
 
     var local = new PouchDB(dbs.local);
-    var remote = new PouchDB(remoteURL);
+    var remote = null;
     var docs = testUtils.makeDocs(5);
-    return remote.allDocs()
-      .then(function (response) {
+    
+    return testUtils.createUser().then(function(remoteURL){
+      remote = new PouchDB(remoteURL);
+      return remote.allDocs();
+    }).then(function (response) {
         assert.equal(response.rows.length, 0);
         return local.bulkDocs(docs);
       }).then(function () {
@@ -50,11 +53,13 @@ describe('test single user sync', function () {
     var remoteURL = testUtils.url(username, auth.sha1(username));
 
     var local = new PouchDB(dbs.local);
-    var remote = new PouchDB(remoteURL);
+    var remote = null;
     var docs = testUtils.makeDocs(5);
 
-    return remote.bulkDocs(docs)
-      .then(function () {
+    return testUtils.createUser().then(function(remoteURL){
+      remote = new PouchDB(remoteURL);
+      return remote.bulkDocs(docs);
+    }).then(function () {
         return local.replicate.from(remote);
       }).then(function () {
         return local.allDocs();
@@ -71,11 +76,13 @@ describe('test single user sync', function () {
 
     var client1 = new PouchDB(dbs.local);
     var client2 = new PouchDB(dbs.secondary);
-    var remote = new PouchDB(remoteURL);
+    var remote = null;
     var docs = testUtils.makeDocs(5);
 
-    return client1.bulkDocs(docs)
-      .then(function () {
+    return testUtils.createUser().then(function(remoteURL){
+      remote = new PouchDB(remoteURL);
+      return client1.bulkDocs(docs);
+    }).then(function () {
         return client1.replicate.to(remote);
       }).then(function () {
         return client2.replicate.from(remote);

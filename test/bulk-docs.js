@@ -9,12 +9,14 @@ var assert = require('assert'),
 describe('bulk_docs', function () {
   it('bulk_docs with server assigned ids', function () {
     this.timeout(10000);
-    var docCount = 5;
-    var docs = testUtils.makeDocs(docCount),
-      remoteURL = testUtils.uniqueUserUrl(),
+    var docCount = 5,
+      docs = testUtils.makeDocs(docCount),
+      remote = null;
+      
+    return testUtils.createUser().then(function(remoteURL){
       remote = new PouchDB(remoteURL);
-
-    return remote.bulkDocs(docs).then(function (response) {
+      return remote.bulkDocs(docs);
+    }).then(function (response) {
       assert.equal(response.length, docCount, response);
       response.forEach(function (row) {
         assert(!row.error);
@@ -31,13 +33,15 @@ describe('bulk_docs', function () {
     this.timeout(10000);
     var docCount = 2;
     var docs = testUtils.makeDocs(docCount),
-      remoteURL = testUtils.uniqueUserUrl(),
-      remote = new PouchDB(remoteURL);
+      remote = null;
 
     docs[0]._id = chance.guid();
     docs[1]._id = chance.guid();
 
-    return remote.bulkDocs(docs).then(function (response) {
+    return testUtils.createUser().then(function(remoteURL){
+      remote = new PouchDB(remoteURL);
+      return remote.bulkDocs(docs);
+    }).then(function (response) {
       assert.equal(response.length, docCount, response);
       response.forEach(function (row) {
         assert(!row.error);
@@ -54,12 +58,14 @@ describe('bulk_docs', function () {
     this.timeout(10000);
     var docCount = 2;
     var docs = testUtils.makeDocs(docCount),
-      remoteURL = testUtils.uniqueUserUrl(),
-      remote = new PouchDB(remoteURL);
+    remote = null;
 
     docs[0]._id = chance.guid();
 
-    return remote.bulkDocs(docs).then(function (response) {
+    return testUtils.createUser().then(function(remoteURL){
+      remote = new PouchDB(remoteURL);
+      return remote.bulkDocs(docs);
+    }).then(function (response) {
       assert.equal(response.length, docCount, response);
       response.forEach(function (row) {
         assert(!row.error);
@@ -72,12 +78,16 @@ describe('bulk_docs', function () {
     var docCount = 2;
     var docs = testUtils.makeDocs(docCount),
       docs2 = testUtils.makeDocs(docCount),
-      remoteURL = testUtils.uniqueUserUrl(),
-      remote = new PouchDB(remoteURL),
-      remoteURL2 = testUtils.uniqueUserUrl(),
-      remote2 = new PouchDB(remoteURL2);
+      remote = null,
+      remote2 = null;
 
-    return remote.bulkDocs(docs).then(function (response) {
+  return testUtils.createUser().then(function(remoteURL){
+    remote = new PouchDB(remoteURL);
+    return testUtils.createUser();
+  }).then(function(remoteURL2){
+    remote2 = new PouchDB(remoteURL2);
+    return remote.bulkDocs(docs);
+  }).then(function (response) {
       docs2[0]._id = response[0].id;
       docs2[0]._rev = response[0].rev;
       return remote2.bulkDocs(docs2).then(function (response) {

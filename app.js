@@ -2,6 +2,7 @@
 
 var app = module.exports = require('express')(),
   compression = require('compression'),
+  session = require('express-session'),
   Cloudant = require('cloudant'),
   bodyParser = require('body-parser'),
   router = require('./lib/routes/index'),
@@ -19,10 +20,14 @@ var cloudant = new Cloudant(env.couchHost),
   dbName = app.dbName = env.databaseName;
 
 app.db = cloudant.db.use(dbName);
+app.usersdb = cloudant.db.use('_users');
 app.metaKey = 'com_cloudant_meta';
 app.events = ee;
 app.cloudant = cloudant;
 app.serverURL = env.couchHost;
+
+// session support
+app.use(session({ secret: app.metaKey }));
 
 // Setup the logging format
 if (env.logFormat !== 'off') {
@@ -62,6 +67,7 @@ function main() {
 // kicking off the app.
 async.series(
   [
+    init.createUsersDB,
     init.verifyDB,
     init.verifySecurityDoc,
     init.installSystemViews

@@ -10,12 +10,14 @@ describe('changes', function () {
     this.timeout(10000);
     var docCount = 2;
     var docs = testUtils.makeDocs(docCount),
-      remoteURL = testUtils.uniqueUserUrl(),
-      remote = new PouchDB(remoteURL),
+      remote = null,
       seq1 = '',
       id ,rev;
 
-    return remote.bulkDocs(docs).then(function () {
+    return testUtils.createUser().then(function(remoteURL){
+      remote = new PouchDB(remoteURL);
+      return remote.bulkDocs(docs);
+    }).then(function () {
       return remote.changes();
     }).then(function (response) {
       // testUtils.d('FIRST', response);

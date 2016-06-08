@@ -4,7 +4,9 @@ var chance = require('chance')(),
   url = require('url'),
   PouchDB = require('pouchdb'),
   env = require('../lib/env.js'),
-  auth = require('../lib/auth');
+  auth = require('../lib/auth'),
+  app = require('../app');
+  
 
 var testUtils = {};
 var userCount = 0;
@@ -40,6 +42,32 @@ testUtils.uniqueUserUrl = function() {
   var username = 'user' + userCount++;
   return testUtils.url(username, auth.sha1(username));
 };
+
+testUtils.createUser = function() {
+  var p = new Promise(function(resolve, reject) {
+    var dbname = process.env.MBAAS_DATABASE_NAME;
+    var username = dbname + 'user' + userCount++;
+    var password = 'thepassword';
+    var url = testUtils.url(username, password);
+    var user = {
+      _id: 'org.couchdb.user:' + username,
+      type: 'user',
+      name: username,
+      roles: [],
+      username: username,
+      password_scheme: 'simple',
+      password: password
+    };
+    app.usersdb.insert(user, function(err, data) {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(url);
+      }
+    });
+  });
+  return p;
+}
 
 
 testUtils.makeDocs = function(count) {

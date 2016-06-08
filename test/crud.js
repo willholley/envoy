@@ -10,12 +10,23 @@ var assert = require('assert'),
 
 describe('CRUD tests', function() {
   var badPassword = 'baz';
+  var remoteURL = null,
+    badRemoteURL = null;
+  
+  
+  before(function() {
+    return testUtils.createUser().then(function(url){
+      remoteURL = url;
+      badRemoteURL = remoteURL.replace('@','a@');
+      return url;
+    });
+  });
 
   // create doc successfully
   it('create doc successfully', function(done) {
     var path = '/' + testUtils.makeDocName();
     var body = {'hello': 'world'};
-    request(testUtils.url(username, password)).put(path)
+    request(remoteURL).put(path)
       .send(body)
       .end(function(err, res){
         if (err) {
@@ -42,7 +53,7 @@ describe('CRUD tests', function() {
         }
       }
     };
-    request(testUtils.url(username, password)).put(path)
+    request(remoteURL).put(path)
       .send(body)
       .end(function(err, res){
         if (err) {
@@ -57,7 +68,8 @@ describe('CRUD tests', function() {
   it('create doc unsuccessfully, incorrect creds', function(done) {
     var path = '/' + testUtils.makeDocName();
     var body = {'hello': 'world'};
-    request(testUtils.url(username, badPassword)).put(path)
+    // bad password
+    request(badRemoteURL).put(path)
       .send(body)
       .end(function(err,res){
         if (err) {
@@ -76,7 +88,7 @@ describe('CRUD tests', function() {
 
   it('read doc unsuccessfully, incorrect creds', function(done) {
     var path = '/' + testUtils.makeDocName();
-    request(testUtils.url(username, badPassword)).get(path)
+    request(badRemoteURL).get(path)
       .send()
       .end(function(err,res){
         if (err) {
@@ -97,7 +109,7 @@ describe('CRUD tests', function() {
     async.series([
       function(next) {
         // create doc
-        request(testUtils.url(username, password)).put(path)
+        request(remoteURL).put(path)
           .send(body1)
           .end(function(err, res) {
             assert.equal(res.statusCode, 200);
@@ -106,7 +118,7 @@ describe('CRUD tests', function() {
       },
       function(next) {
         // update doc
-        request(testUtils.url(username, password))
+        request(remoteURL)
           .post(path)
           .send(body2)
           .end(function(err, res) {
@@ -116,7 +128,7 @@ describe('CRUD tests', function() {
       },
       function(next) {
         // check rev
-        request(testUtils.url(username, password)).get(path)
+        request(remoteURL).get(path)
           .send()
           .end(function(err, res){
             if (err) {
@@ -140,7 +152,7 @@ describe('CRUD tests', function() {
     async.series([
       function(next) {
         // create doc
-        request(testUtils.url(username, password)).put(path)
+        request(remoteURL).put(path)
           .send(body1)
           .end(function(err, res) {
             assert.equal(res.statusCode, 200);
@@ -149,7 +161,7 @@ describe('CRUD tests', function() {
       },
       function(next) {
         // update doc
-        request(testUtils.url(username, badPassword)).post(path)
+        request(badRemoteURL).post(path)
           .send(body2)
           .end(function(err, res) {
             assert.equal(res.statusCode, 401);
@@ -168,7 +180,7 @@ describe('CRUD tests', function() {
     async.series([
       function(next) {
         // create doc
-        request(testUtils.url(username, password)).put(path)
+        request(remoteURL).put(path)
           .send(body)
           .end(function(err, res) {
             assert.equal(res.statusCode, 200);
@@ -179,7 +191,7 @@ describe('CRUD tests', function() {
       },
       function(next) {
         // delete doc
-        request(testUtils.url(username, password))
+        request(remoteURL)
           .del(path+'?rev='+rev)
           .send()
           .end(function(err, res) {
@@ -198,7 +210,7 @@ describe('CRUD tests', function() {
     async.series([
       function(next) {
         // create doc
-        request(testUtils.url(username, password)).put(path)
+        request(remoteURL).put(path)
           .send(body)
           .end(function(err, res) {
             assert.equal(res.statusCode, 200);
@@ -209,7 +221,7 @@ describe('CRUD tests', function() {
       },
       function(next) {
         // delete doc
-        request(testUtils.url(username, badPassword))
+        request(badRemoteURL)
           .del(path+'?rev='+rev)
           .send()
           .end(function(err, res) {

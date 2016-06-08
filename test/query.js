@@ -5,17 +5,19 @@ var assert = require('assert'),
   auth = require('../lib/auth'),
   PouchDB = require('pouchdb'),
   app = require('../app'),
-  remoteURL = testUtils.uniqueUserUrl(),
-  remote = new PouchDB(remoteURL);
+  remoteURL = null,
+  remote = null;
 
 
 
 describe('query', function () {
   
-  before(function(done) {
-    var docs = testUtils.makeDocs(20);
-    remote.bulkDocs(docs, function (response) {
-      done(); 
+  before(function() {
+    return testUtils.createUser().then(function(url){
+      remote = new PouchDB(url);
+      remoteURL = url;
+      var docs = testUtils.makeDocs(20);
+      return remote.bulkDocs(docs);
     });
   });
   

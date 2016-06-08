@@ -11,12 +11,14 @@ describe('revsDiff', function () {
     this.timeout(10000);
     var docCount = 1,
       docs = testUtils.makeDocs(docCount),
-      remoteURL = testUtils.uniqueUserUrl(),
-      remote = new PouchDB(remoteURL),
+      remote = null,
       fakeid = chance.guid(),
       fakerev = '1-f5cecfc5e2d5ea3e8b254e21d990fa7c';
 
-    return remote.bulkDocs(docs).then(function (response) {
+    return testUtils.createUser().then(function(remoteURL){
+      remote = new PouchDB(remoteURL);
+      return remote.bulkDocs(docs);
+    }).then(function (response) {
       var newDoc = testUtils.makeDocs(1)[0];
       newDoc._id = response[0].id;
       newDoc._rev = response[0].rev;
@@ -50,13 +52,19 @@ describe('revsDiff', function () {
     var docCount = 1,
       docs = testUtils.makeDocs(docCount),
       docs2 = testUtils.makeDocs(docCount),
-      remote = new PouchDB(testUtils.uniqueUserUrl()),
-      remote2 = new PouchDB(testUtils.uniqueUserUrl()),
+      remote = null,
+      remote2 = null,
       fakeid = chance.guid(),
       fakerev = '1-45cecfc5e2d5ea3e8b254f21d990fa7a';
 
-    return remote2.bulkDocs(docs2).then(function () {
-      return remote.bulkDocs(docs);
+    return testUtils.createUser().then(function(remoteURL){
+      remote = new PouchDB(remoteURL);
+      return testUtils.createUser();
+    }).then(function(remoteURL2){
+      remote2 = new PouchDB(remoteURL2);
+      return remote2.bulkDocs(docs2);
+    }).then(function() {
+      return remote.bulkDocs(docs)
     }).then(function (response) {
       var newDoc = testUtils.makeDocs(1)[0];
       newDoc._id = response[0].id;
@@ -83,6 +91,8 @@ describe('revsDiff', function () {
       // single revision
       assert.equal(response[fakeid].missing.length, 1,
         'Single revision');
-    });
+    }).catch(function(x) {
+      console.log("X",x);
+    });;
   });
 });

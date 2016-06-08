@@ -10,10 +10,12 @@ describe('bulk_get', function () {
     this.timeout(10000);
     var docCount = 5;
     var docs = testUtils.makeDocs(docCount),
-      remoteURL = testUtils.url('bob', auth.sha1('bob')),
-      remote = new PouchDB(remoteURL);
+      remote = null;
 
-    return remote.bulkDocs(docs).then(function (response) {
+    return testUtils.createUser().then(function(remoteURL){
+        remote = new PouchDB(remoteURL);
+        return remote.bulkDocs(docs);
+    }).then(function (response) {
       return remote.bulkGet({docs: response});
     }).then(function (response) {
       response.results.forEach(function (row) {
