@@ -76,7 +76,7 @@ There are many different ways to address these issues, client side, server side,
 
 ## Goals: Cloudant Envoy gateway
 
-`Cloudant Envoy` is a thin gateway server application that sits between a Cloudant database and a mobile application. It implements document-level auth, users (and the beginnings of groups; not yet complete). This would provide a way around the first and the third problem areas as described above: each app would be backed by a single database instead of a database per user, and reads and changes would be filtered by user identity.
+`Cloudant Envoy` is a thin gateway server application that sits between a Cloudant database and a mobile application. It implements document-level auth, users. This would provide a way around the first and the third problem areas as described above: each app would be backed by a single database instead of a database per user, and reads and changes would be filtered by user identity.
 
 It is important to understand what this _isn't_. This isn't intended to be a new replicator, or even a way of providing features for other use cases: the intention is to make us more competitive in the mobile sphere. By its very nature (e.g. millions of simultaneous users) this layer needs to be as thin as it can be in order to not to become a bottle neck.
 
@@ -103,20 +103,16 @@ Central to the proposed solution is to add a new private field into each documen
 {
     "_id": "c3065e59c9fa54cc81b5623fa06902f0",
     "_rev": "1-9f7a5dd995bf4953bdb53f22f9b73558",
-    "com.cloudant.meta": {
-        "auth": {
-            "users": [ "harry", "hermione", "ron" ],
-            "groups": [ ]
-        }
+    "com_cloudant_meta": {
+        "ownerid": "hermione"
     },
     "age": 5,
     "type": "owl"
 }
 ```
 
-This states that the users `harry`, `hermione` and `ron` all can read, write and delete this document. The `com.cloudant.meta` field will be inserted on create, maintained on updates, but removed before a document is returned in response to a client request. Obviously, this field will be visible from the Cloudant console and in responses to client requests which go to the underlying database directly, bypassing the new layer.
+This states that the user `hermione` can read, write and delete this document. The `com_cloudant_meta` field will be inserted on create, maintained on updates, but removed before a document is returned in response to a client request. Obviously, this field will be visible from the Cloudant console and in responses to client requests which go to the underlying database directly, bypassing the new layer.
 
-The `groups` list will allow groups of users to be granted access. For the initial release, there will only be a single, fixed group called `public` which grants read-only access to the document to every user.
 
 We do not expose views in this new layer: client data access will need to be via Query only. This is vital.
 
@@ -135,11 +131,8 @@ will result in the following document being written to the database:
 {
     "_id": "0d711609b3ab27a9069e7da766d93334",
     "_rev": "1-42261671e23759c51e7f0899ee99418d",
-    "com.cloudant.meta": {
-        "auth": {
-            "users": [ "harry" ],
-            "groups": [ ]
-        }
+    "com_cloudant_meta": {
+      "ownerid": "harry" 
     },
     "age": 456,
     "type": "thestral"
@@ -165,8 +158,7 @@ the result should be
 
 If `hermione` now were to request this document she should get a `401 Unauthorized` response.
 
-CouchDB uses certain special fields that starts with an underscore to denote metadata. Ideally, we'd use something like "_auth" for our purpose, but CouchDB will strip out any underscored fields it doesn't recognise. For this reason, we use the field name `com.cloudant.meta`, as we don't want to modify the behaviour of the CouchDB underneath. The consequence this has is that documents may not contain a field called
-`com.cloudant.meta`. 
+CouchDB uses certain special fields that starts with an underscore to denote metadata. Ideally, we'd use something like "_auth" for our purpose, but CouchDB will strip out any underscored fields it doesn't recognise. For this reason, we use the field name `com_cloudant_meta`, as we don't want to modify the behaviour of the CouchDB underneath. The consequence this has is that documents may not contain a field called `com_cloudant_meta`. 
 
 ## Filtered replication 
 
@@ -179,56 +171,36 @@ We'd need to implement the following parts of the CouchDB CRUD API.
 
 ### HEAD|GET _/{db}/{docid}_
 
-If the requesting user isn't either in the `users` list or the document has the group `public` listed, the request should fail with a `401 Unauthorized` response.
+If the requesting user isn't the owner the request should fail with a `401 Unauthorized` response.
 
 ### POST|DELETE _/{db}/{docid}_
 
-If the requesting user isn't in the `users` list, the request should fail with a `401 Unauthorized` response. Note that the `public` group grants read access only.
+If the requesting user isn't the owner the request should fail with a `401 Unauthorized` response.
 
 ### PUT _/{db}/{docid}_
 
-Create a new document with the creating user in the `users` list.
+Create a new document, adding the document's ownerid transparently.
 
 ## Replication API
 
 ### POST _/{db}/\_bulk_docs_
 
-Should behave like the current, but where new documents are created, they should have the creating user added to the `users` field, and where documents are provided with `{_id, _rev}` these should be subjected to the authorisation check as for a `POST` to `/{db}/{docid}`.
+Should behave like the current, adding the document's ownerid transparently, and where documents are provided with `{_id, _rev}` these should be subjected to the authorisation check as for a `POST` to `/{db}/{docid}`.
 
 Note: this is potentially a performance problem as we need to check ownership of every document in the list that is given with `{_id, _rev}`. It may be possible to implement this efficiently by first requesting all docs representing updates using `_all_docs?keys=[key1, key2, ..., keyN]` (or the POST version, rather) and validating the auth details.
 
 ### GET _/{db}/\_changes_
 
-The changes feed should be filtered according to the same rules as a `GET` to `/{db}/{docid}`: only return changes related to documents where the requesting user is either listed in the `users` list, or the document has the `public` group ownership.
+The changes feed should be filtered according to the same rules as a `GET` to `/{db}/{docid}`: only return changes related to documents where the requesting user is the owner.
 
 ### POST _/{db}/\_revs\_diff_
 
-RevsDiff should check the returned list according to the same rules as a `GET` to `/{db}/{docid}`: only return changes related to documents where the requesting user is either listed in the `users` list, or the document has the `public` group ownership.
+RevsDiff should check the returned list according to the same rules as a `GET` to `/{db}/{docid}`: only return changes related to documents where the requesting user is the owner.
 
 ## Cloudant Query API
-
-### POST _/{db}/\_index
-
-Creates a Cloudant Query index, supplementing the index to allows the ownership of a document to be queried.
 
 ### POST _/{db}/\_find
 
 Queries using Cloudant Query only returning the querying user's documents.
 
-### Cloudant Query Group support (not implemented)
-
-In order to respect groups, the query would have to be modified like so:
-
-```json
-{
-    "selector": {
-        "$or": [
-            "auth.users":  { "$elemMatch": { "$eq": "USER" } },
-            "auth.groups": { "$elemMatch": { "$eq": "public" } }
-        ]
-    }  
-}
-```
-
-to ensure that the user can only see the documents they are authorised to see. The current implementation only uses auth.users.
 
