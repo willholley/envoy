@@ -6,6 +6,8 @@ _by: Stefan Kruger_
 
 Note: this is a proof of concept; it's not battle tested or supported in any way. If you find bugs (of which there will be plenty), do let us know – or better, consider a pull request.
 
+[![Build Status](https://travis-ci.org/cloudant-labs/envoy.svg)](https://travis-ci.org/cloudant-labs/envoy.svg)
+
 ## Installation
 
 
