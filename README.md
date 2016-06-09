@@ -1,5 +1,7 @@
 # Cloudant Envoy
 
+[![Build Status](https://travis-ci.org/cloudant-labs/envoy.svg)](https://travis-ci.org/cloudant-labs/envoy.svg)
+
 _by: Stefan Kruger_
 
 ## Unsupported software
