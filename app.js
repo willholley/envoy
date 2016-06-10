@@ -67,10 +67,10 @@ function main() {
 // kicking off the app.
 async.series(
   [
-    init.createUsersDB,
     init.verifyDB,
     init.verifySecurityDoc,
-    init.installSystemViews
+    init.installSystemViews,
+    init.createUsersDB
   ],
 
   function (err, results) {
