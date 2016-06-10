@@ -27,7 +27,11 @@ app.cloudant = cloudant;
 app.serverURL = env.couchHost;
 
 // session support
-app.use(session({ secret: app.metaKey }));
+app.use(session({ 
+  secret: app.metaKey,
+  resave: true,
+  saveUninitialized: true
+}));
 
 // Setup the logging format
 if (env.logFormat !== 'off') {
