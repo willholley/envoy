@@ -18,6 +18,9 @@ describe('bulk_get', function () {
     }).then(function (response) {
       return remote.bulkGet({docs: response});
     }).then(function (response) {
+      assert.equal(typeof response, 'object');
+      assert.equal(typeof response.results, 'object');
+      assert.equal(response.results.length, docCount);
       response.results.forEach(function (row) {
         var doc = row.docs[0];
         assert(doc.ok && doc.ok._id && doc.ok._id && doc.ok._rev);
