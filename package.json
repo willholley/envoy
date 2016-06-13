@@ -20,6 +20,7 @@
     "start": "node ./bin/www",
     "jshint": "jshint -c .jshintrc lib/",
     "mocha": "./node_modules/.bin/mocha test -t 20000",
+    "coverage": "./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- -t 20000",
     "test": "bash scripts/run_couchdb_on_travis.sh; npm run mocha"
   },
   "dependencies": {
@@ -38,6 +39,7 @@
   },
   "devDependencies": {
     "chance": "^1.0.3",
+    "istanbul": "^0.4.3",
     "jshint": "2.9.2",
     "mocha": "2.4.5",
     "supertest": "1.2.0",
