@@ -43,7 +43,7 @@ testUtils.uniqueUserUrl = function() {
   return testUtils.url(username, auth.sha1(username));
 };
 
-testUtils.createUser = function() {
+var makeUser = function() {
   var p = new Promise(function(resolve, reject) {
     var dbname = process.env.MBAAS_DATABASE_NAME;
     var username = dbname + 'user' + userCount++;
@@ -69,6 +69,24 @@ testUtils.createUser = function() {
   return p;
 }
 
+testUtils.createUser = function(numUsers) {
+  numUsers = numUsers || 1;
+  return new Promise(function(resolve, reject) {
+    if (numUsers === 1) {
+      makeUser().then(function(url) {
+        resolve(url);
+      });
+    } else {
+      var arr = [];
+      for(var i=0; i < numUsers; i++) {
+        arr.push(makeUser());
+      }
+      Promise.all(arr).then(function(results) {
+        resolve(results);
+      })
+    }
+  });
+};
 
 testUtils.makeDocs = function(count) {
   var docs = [];
