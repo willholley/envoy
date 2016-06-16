@@ -72,33 +72,5 @@ describe('bulk_docs', function () {
       });
     });
   });
-
-  it('bulk_docs with some docs failing auth', function () {
-    this.timeout(10000);
-    var docCount = 2;
-    var docs = testUtils.makeDocs(docCount),
-      docs2 = testUtils.makeDocs(docCount),
-      remote = null,
-      remote2 = null;
-
-  return testUtils.createUser().then(function(remoteURL){
-    remote = new PouchDB(remoteURL);
-    return testUtils.createUser();
-  }).then(function(remoteURL2){
-    remote2 = new PouchDB(remoteURL2);
-    return remote.bulkDocs(docs);
-  }).then(function (response) {
-      docs2[0]._id = response[0].id;
-      docs2[0]._rev = response[0].rev;
-      return remote2.bulkDocs(docs2).then(function (response) {
-        response.forEach(function (row) {
-          if (row.id === docs2[0]._id) {
-            assert(row.error);
-          } else {
-            assert(!row.error);
-          }
-        });
-      });
-    });
-  });
+ 
 });

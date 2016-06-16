@@ -20,7 +20,7 @@ describe('test single user sync', function () {
   });
 
   it('push replication', function () {
-    this.timeout(10000);
+    this.timeout(20000);
 
     var username = 'push_repl_test';
     var remoteURL = testUtils.url(username, auth.sha1(username));
@@ -47,7 +47,7 @@ describe('test single user sync', function () {
   });
 
   it('pull replication', function () {
-    this.timeout(10000);
+    this.timeout(20000);
 
     var username = 'pull_repl_test';
     var remoteURL = testUtils.url(username, auth.sha1(username));
@@ -69,7 +69,7 @@ describe('test single user sync', function () {
   });
 
   it('multi-client replication', function () {
-    this.timeout(10000);
+    this.timeout(20000);
 
     var username = 'multi_repl_test';
     var remoteURL = testUtils.url(username, auth.sha1(username));

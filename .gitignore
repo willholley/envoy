@@ -32,5 +32,8 @@ node_modules
 # The run scripts people might use
 *.sh
 
+# vscode
+.vscode
+
 # dotenv config
 .env

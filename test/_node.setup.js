@@ -3,7 +3,7 @@
 process.env.MBAAS_DATABASE_NAME = 
   (process.env.MBAAS_DATABASE_NAME || 'mbaas') +
 	(new Date().getTime());
-
+//  process.env.LOG_FORMAT='dev';
 var testsDir = process.env.TESTS_DIR || './tmp';
 var exec = require('child_process').exec;
 

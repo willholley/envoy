@@ -105,6 +105,8 @@ describe('CRUD tests', function() {
     var path = '/' + testUtils.makeDocName();
     var body1 = {'hello': 'world'};
     var body2 = {'goodbye': 'world'};
+    var rev = null;
+    var id = null;
 
     async.series([
       function(next) {
@@ -113,11 +115,15 @@ describe('CRUD tests', function() {
           .send(body1)
           .end(function(err, res) {
             assert.equal(res.statusCode, 200);
+            rev = res.body.rev;
+            id = res.body.id
             next();
           });
       },
       function(next) {
         // update doc
+        body2._id = id;
+        body2._rev = rev;
         request(remoteURL)
           .post(path)
           .send(body2)
