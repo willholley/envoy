@@ -79,43 +79,48 @@ There are many different ways to address these issues, client side, server side,
 
 ## Goals: Cloudant Envoy gateway
 
-`Cloudant Envoy` is a thin gateway server application that sits between a Cloudant database and a mobile application. It implements document-level auth, users. This would provide a way around the first and the third problem areas as described above: each app would be backed by a single database instead of a database per user, and reads and changes would be filtered by user identity.
+*Cloudant Envoy* is a thin gateway server application that sits between a Cloudant database and a mobile application. It implements document-level auth and users. This would provide a way around the first and the third problem areas as described above: each app would be backed by a single database instead of a database per user, and reads and changes would be filtered by user identity.
 
-It is important to understand what this _isn't_. This isn't intended to be a new replicator, or even a way of providing features for other use cases: the intention is to make us more competitive in the mobile sphere. By its very nature (e.g. millions of simultaneous users) this layer needs to be as thin as it can be in order to not to become a bottle neck.
+It is important to understand what this _isn't_. This isn't intended to be a new replicator, or even a way of providing features for other use cases: the intention is to make Cloudant a better fit as a backend in the mobile sphere. By its very nature (e.g. millions of simultaneous users) this layer needs to be as thin as it can be in order to not to become a bottle neck.
 
-The Envoy server should not present an undue load on the underlying Cloudant cluster: if a million sync requests imply a million changes feeds, we're no better off than the million user databases replicating to a single analytics database. In order to make this robust it may be necessary to have a single changes feed follower pushing data onto an external message queue which can be scaled separately.
+The Envoy server should not present an undue load on the underlying Cloudant cluster.
 
 Here's what this currently does:
 
-1. Implement a per-document access rights model and the corresponding CRUD API calls
+1. Implement a per-document access rights model
 2. Ensure that the replication-specific end points respect the access rights model
 3. CORS
+4. Extend Cloudant Query (a.k.a. _Mango_) to always implicitly search only the documents a user can see
+5. Provide a concept of a local user's database that integrators can hook into
+6. Plugin model that allows integrators to tweak or replace both auth and access models
 
-Here's what's currently outstanding:
-
-1. Extend Query to always implicitly search based on user
-2. Implement a new set of API end points to allow the registration of a new user
-3. Implement auth against third-party authentication services
-4. Groups concept is not fully fleshed out
 
 ## Per document access rights
 
-Central to the proposed solution is to add a new private field into each document which carries access rights information:
+The default access plugin implements access rights by modifying the `_id` field of documents to be prefixed by the `sha1` hash
+of the username. Hence, if user `hermione` creates the following document:
 
 ```json
 {
     "_id": "c3065e59c9fa54cc81b5623fa06902f0",
     "_rev": "1-9f7a5dd995bf4953bdb53f22f9b73558",
-    "com_cloudant_meta": {
-        "ownerid": "hermione"
-    },
     "age": 5,
     "type": "owl"
 }
 ```
 
-This states that the user `hermione` can read, write and delete this document. The `com_cloudant_meta` field will be inserted on create, maintained on updates, but removed before a document is returned in response to a client request. Obviously, this field will be visible from the Cloudant console and in responses to client requests which go to the underlying database directly, bypassing the new layer.
+it would become rewritten to
 
+```json
+{
+    "_id": "a7257ef242a856304478236fe46fee00f23f8a25-c3065e59c9fa54cc81b5623fa06902f0",
+    "_rev": "1-9f7a5dd995bf4953bdb53f22f9b73558",
+    "age": 5,
+    "type": "owl"
+}
+```
+
+This states that the user `hermione` can read, update and delete this document. The `_id` field will be modified on create, maintained on updates, but removed before a document is returned in response to a client request. Obviously, this will be visible from the Cloudant console and in responses to client requests which go to the underlying database directly, bypassing the new layer.
 
 We do not expose views in this new layer: client data access will need to be via Query only. This is vital.
 
@@ -132,11 +137,8 @@ will result in the following document being written to the database:
 
 ```json
 {
-    "_id": "0d711609b3ab27a9069e7da766d93334",
+    "_id": "23a0b5e4fb6c6e8280940920212ecd563859cb3c-0d711609b3ab27a9069e7da766d93334",
     "_rev": "1-42261671e23759c51e7f0899ee99418d",
-    "com_cloudant_meta": {
-      "ownerid": "harry" 
-    },
     "age": 456,
     "type": "thestral"
 }
@@ -161,11 +163,9 @@ the result should be
 
 If `hermione` now were to request this document she should get a `401 Unauthorized` response.
 
-CouchDB uses certain special fields that starts with an underscore to denote metadata. Ideally, we'd use something like "_auth" for our purpose, but CouchDB will strip out any underscored fields it doesn't recognise. For this reason, we use the field name `com_cloudant_meta`, as we don't want to modify the behaviour of the CouchDB underneath. The consequence this has is that documents may not contain a field called `com_cloudant_meta`. 
-
 ## Filtered replication 
 
-With this in place we can tackle the other problem: subset or filtered replication. Given that we now have a single database backing the app used by multiple users we need to ensure that mobile sync also obeys the access rules. This means that we need to ensure that the `changes`, `bulk_docs` and `revs_diff` end points also respect the authentication rules.
+With this in place we can tackle the other problem: subset or filtered replication. Given that we now have a single database backing the app used by multiple users we need to ensure that mobile sync also obeys the access rules. This means that we need to ensure that the `_changes`, `_bulk_docs`, `_bulk_get` and `_revs_diff` end points also respect the authentication rules.
 
 
 ## CRUD API
