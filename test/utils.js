@@ -45,25 +45,14 @@ testUtils.uniqueUserUrl = function() {
 
 var makeUser = function() {
   var p = new Promise(function(resolve, reject) {
-    var dbname = process.env.MBAAS_DATABASE_NAME;
-    var username = dbname + 'user' + userCount++;
+    var username = process.env.MBAAS_DATABASE_NAME + 'user' + userCount++;
     var password = 'thepassword';
     var url = testUtils.url(username, password);
-    var user = {
-      _id: 'org.couchdb.user:' + username,
-      type: 'user',
-      name: username,
-      roles: [],
-      username: username,
-      password_scheme: 'simple',
-      password: password
-    };
-    app.usersdb.insert(user, function(err, data) {
+    var x = auth.newUser(username, password, function(err, data) {
       if (err) {
-        reject(err);
-      } else {
-        resolve(url);
+        return reject(err);
       }
+      resolve(url);
     });
   });
   return p;

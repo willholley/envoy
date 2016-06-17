@@ -10,6 +10,7 @@ var app = module.exports = require('express')(),
   init = require('./lib/init'),
   events = require('events'),
   ee = new events.EventEmitter(),
+  auth = require('./lib/auth'),
   morgan = require('morgan'),
   cors = require('./lib/cors'); 
 
@@ -74,7 +75,7 @@ async.series(
     init.verifyDB,
     init.verifySecurityDoc,
     init.installSystemViews,
-    init.createUsersDB
+    auth.init
   ],
 
   function (err, results) {

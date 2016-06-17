@@ -34,6 +34,7 @@ node_modules
 
 # vscode
 .vscode
+jsconfig.json
 
 # dotenv config
 .env

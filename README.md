@@ -38,7 +38,8 @@ After those variables are set, you can start the Envoy server with `npm start`. 
 * MBAAS_DATABASE_NAME - the name of the Cloudant database to use. Defaults to `mbaas`
 * LOG_FORMAT - the type of logging to output. One of `combined`, `common`, `dev`, `short`, `tiny`, `off`. Defaults to `off`. (see https://www.npmjs.com/package/morgan)
 * DEBUG - see debugging section
-
+* ENVOY_AUTH - which authentication plugin to use. One of `default`, `couchdb_users`
+* ENVOY_ACCESS - which access control plugin to use. One of `default`, `id`, `meta`
 
 ## Debugging
 
@@ -205,4 +206,47 @@ RevsDiff should check the returned list according to the same rules as a `GET` t
 
 Queries using Cloudant Query only returning the querying user's documents.
 
+## Plugins
 
+At startup, *Envoy* can load in plugin modules to modify Envoy's behaviour. The plugin source code can be found in the `lib/plugins` directory, with two plugin types supported
+
+* `auth` - controls how authentication occurs in Envoy.
+* `access` - controls how the ownership of a document is stored
+
+### Default auth plugin
+
+The `default` auth plugin uses the "envoyusers" database to store a database of users who are allowed to authenticate. Add a user to your "envoyusers" database witha document like this:
+
+```js
+{
+  "_id": "glynn",
+  "_rev": "1-58bbb25716001c681febaccf6d48a9b8",
+  "type": "user",
+  "name": "glynn",
+  "roles": [],
+  "username": "glynn",
+  "salt": "monkey",
+  "password": "9ef16a44310564ecd1b6894c46d93c58281b07af"
+}
+```
+
+Where the "password" field is the `sha1` of the "salt" field concatenated with the user's password e.g. 
+
+```js
+    > sha1('monkey' + 'password')
+    '9ef16a44310564ecd1b6894c46d93c58281b07af'
+```
+
+Additional plugins can be selected using the `ENVOY_AUTH` environment variable. e.g. a value of "couchdb_user" will use the
+CouchDB "_users" database.
+
+### Default access plugin
+
+The `default` access plugin stores the ownership of a document in the "_id" field of the document. If the owner of the document is "glynn", then
+a document who's "_id" is "test" will actually get stored with an id of "3d07659e67fa5a86a06945ec4cdb2754c9fc67bf-test" where "3d07659e67fa5a86a06945ec4cdb2754c9fc67bf" 
+is the sha1 hash of the username.
+
+The replication client doesn't see this additional meta data - it is transparently added and stripped out on its way through Envoy - but it allows Envoy to
+efficiently store many users data in the same database and retrieve the data each user owns efficiently.
+
+Additional plugins can be selected using the `ENVOY_ACCESS` environment variable.
