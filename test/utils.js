@@ -29,6 +29,7 @@ testUtils.cleanup = function (dbs, done) {
 };
 
 testUtils.url = function(user, password) {
+  
   var e = env.getCredentials();
   return url.format({
     protocol: 'http',
@@ -38,14 +39,18 @@ testUtils.url = function(user, password) {
   });
 };
 
+testUtils.uniqueUsername = function() {
+  return process.env.MBAAS_DATABASE_NAME + 'user' + userCount++;
+};
+
 testUtils.uniqueUserUrl = function() {
-  var username = 'user' + userCount++;
+  var username = testUtils.uniqueUsername();
   return testUtils.url(username, auth.sha1(username));
 };
 
 var makeUser = function() {
   var p = new Promise(function(resolve, reject) {
-    var username = process.env.MBAAS_DATABASE_NAME + 'user' + userCount++;
+    var username = testUtils.uniqueUsername();
     var password = 'thepassword';
     var url = testUtils.url(username, password);
     var x = auth.newUser(username, password, function(err, data) {

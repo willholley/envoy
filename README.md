@@ -40,6 +40,7 @@ After those variables are set, you can start the Envoy server with `npm start`. 
 * DEBUG - see debugging section
 * ENVOY_AUTH - which authentication plugin to use. One of `default`, `couchdb_users`
 * ENVOY_ACCESS - which access control plugin to use. One of `default`, `id`, `meta`
+* PRODUCTION - when set to 'true', disables the `POST /_adduser` endpoint
 
 ## Debugging
 
@@ -205,6 +206,18 @@ RevsDiff should check the returned list according to the same rules as a `GET` t
 ### POST _/{db}/\_find
 
 Queries using Cloudant Query only returning the querying user's documents.
+
+## User creation API
+
+### POST _/_adduser
+
+Allows the creation of new Envoy users. Supply a `username` and `password` parameter in a form-encoded post e.g.
+
+```sh
+curl -X POST -d 'username=rita&password=password' https://myenvoy.mybluemix.net/_adduser
+```
+
+This API is only for evaluation purposes and should be disabled in production, by setting the `PRODUCTION` environment variable.
 
 ## Plugins
 
