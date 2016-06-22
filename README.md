@@ -19,6 +19,8 @@ he fastest way to deploy *Cloudant Envoy* to Bluemix is to click the **Deploy to
 
 **Don't have a Bluemix account?** If you haven't already, you'll be prompted to sign up for a Bluemix account when you click the button.  Sign up, verify your email address, then return here and click the the **Deploy to Bluemix** button again. Your new credentials let you deploy to the platform and also to code online with Bluemix and Git. If you have questions about working in Bluemix, find answers in the [Bluemix Docs](https://www.ng.bluemix.net/docs/).
 
+**Note**: Envoy relies on some cutting edge features from CouchDB2. A Cloudant account attained through Bluemix will by default not be compatible. You will need to request that the account be moved to the Cloudant cluster "Porter" with an email to `support@cloudant.com` stating your account name.
+
 ### Manual installation
 
 Cloudant Envoy is a Node.js application on top of the Express.js framework. To install, clone the repo and run `npm install`. The Envoy server needs admin credentials for the backing Cloudant database, and it expects the following environment variables to be set:
