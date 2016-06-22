@@ -52,17 +52,15 @@ function main() {
 
   app.use('/', router);
 
-  // Catch 404 and forward to error handler.
+  // Catch unknown paths
   app.use(function(req, res, next) {
-    var err = new Error('Not Found');
-    err.status = 404;
-    next(err);
+    res.status(400).send({error: 'bad_request', reason: 'unknown path'})
   });
 
   // Error handlers
-  app.use(function(err, req, res) {
+  app.use(function(err, req, res, next) {
     console.error(err.stack);
-    res.status(err.statusCode || 500).send('Something broke!');
+    res.status(500).send('Something broke!');
   });
 
   app.listen(env.port);
