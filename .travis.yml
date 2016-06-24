@@ -17,7 +17,8 @@ env:
   - PORT=8080
   - MBAAS_DATABASE_NAME='mbaas'
   matrix:
-  - COUCH_HOST=http://127.0.0.1:3001
+  - ENVOY_ACCESS="default" COUCH_HOST=http://127.0.0.1:3001
+  - ENVOY_ACCESS="id" COUCH_HOST=http://127.0.0.1:3001
 
 script:
   npm run test

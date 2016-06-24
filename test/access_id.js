@@ -5,7 +5,6 @@ var access = require('../lib/access.js'),
 
 describe('misc utils tests', function() {
 
-  // parses VCAP_SERVICES successfully
   it('add/remove owner to id for normal doc', function(done) {
     var id = '938f5320-0fb3-5354-8ffc-09394a9737d6';
     var ownerid = 'mbaas1465913235414user0';
@@ -28,13 +27,12 @@ describe('misc utils tests', function() {
   
   it('check ownership by valid ids', function(done) {
     var ownerid = 'rita';
-    var ids = ['a','9770da92-7165-4026-ae09-02dd8984ed86','9770da9271654026ae0902dd8984ed86','_local/a'];
-    for(var i in ids) {
-      ids[i] = access.addOwnerId(ids[i], ownerid);
-    }
+    var ids = ['a','9770da92-7165-4026-ae09-02dd8984ed86',
+      '9770da9271654026ae0902dd8984ed86','_local/a'];
     ids.forEach(function(id) {
-      var mine = access.myId(id, ownerid);
-      assert.equal(mine,true);
+      var newId = access.addOwnerId(id, ownerid);
+      var mine = access.myId(newId, ownerid);
+      assert.equal(mine,true, 'id: ' + newId + ', owner:' + ownerid);
     });
     done();
   });
