@@ -19,7 +19,6 @@ describe('test single user sync', function () {
   });
 
   it('push replication', function () {
-    this.timeout(20000);
 
     var username = 'push_repl_test';
     var remoteURL = null;
@@ -46,7 +45,6 @@ describe('test single user sync', function () {
   });
 
   it('pull replication', function () {
-    this.timeout(20000);
 
     var username = 'pull_repl_test';
     var remoteURL = null;
@@ -68,7 +66,6 @@ describe('test single user sync', function () {
   });
 
   it('multi-client replication', function () {
-    this.timeout(20000);
 
     var username = 'multi_repl_test';
     var remoteURL = null;

@@ -7,7 +7,7 @@ var assert = require('assert'),
 
 describe('changes', function () {
   it('sequence', function () {
-    this.timeout(10000);
+
     var docCount = 2;
     var docs = testUtils.makeDocs(docCount),
       remote = null,
@@ -45,4 +45,19 @@ describe('changes', function () {
       console.log(error);
     });
   });
+
+  it('changes with filter is not allowed', function () {
+
+   var remote = null;
+
+    return testUtils.createUser().then(function(remoteURL){
+      remote = new PouchDB(remoteURL);
+      return remote.changes({filter: "x"});
+    }).then(function(r) {
+      assert(false);
+    }).catch(function(e) {
+      assert.equal(e.status, 401);
+    });
+  });
+
 });

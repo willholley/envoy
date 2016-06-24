@@ -28,7 +28,7 @@ describe('misc utils tests', function() {
   
   it('check ownership by valid ids', function(done) {
     var ownerid = 'rita';
-    var ids = ['a','9770da92-7165-4026-ae09-02dd8984ed86','9770da9271654026ae0902dd8984ed86'];
+    var ids = ['a','9770da92-7165-4026-ae09-02dd8984ed86','9770da9271654026ae0902dd8984ed86','_local/a'];
     for(var i in ids) {
       ids[i] = access.addOwnerId(ids[i], ownerid);
     }
@@ -85,6 +85,18 @@ describe('misc utils tests', function() {
     var stripped2 = access.strip(doc2);
     assert.equal('123', stripped._id);
     assert.equal('_local/abc', stripped2._id);
+    done();
+  });
+
+  it('add auth doc', function(done) {
+    var id = 'dog';
+    var doc = { _id: id, a:1};
+    var ownerid = 'bob';
+    var newdoc = access.addAuth(doc, ownerid);
+    assert(id != newdoc._id)
+    assert.equal(newdoc.a, 1);
+    var stripped = access.strip(newdoc);
+    assert.equal('dog', stripped._id);
     done();
   });
 

@@ -3,6 +3,9 @@
 process.env.MBAAS_DATABASE_NAME = 
   (process.env.MBAAS_DATABASE_NAME || 'mbaas') +
 	(new Date().getTime());
+
+// enable /_adduser endpoint
+process.env.PRODUCTION = 'false';
 //  process.env.LOG_FORMAT='dev';
 var testsDir = process.env.TESTS_DIR || './tmp';
 var exec = require('child_process').exec;
@@ -20,7 +23,6 @@ var app = require('../app');
 
 // ensure server is started before running any tests
 before(function(done) {
-  this.timeout(10000);
   app.events.on('listening', function() {
     console.log('[OK]  Server is up');
     done();

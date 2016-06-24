@@ -65,4 +65,23 @@ describe('adduser', function () {
     });
   });
 
+  it('duplicate user', function (done) {
+    var username = testUtils.uniqueUsername();
+    var r = { 
+      path: '_adduser', 
+      method: 'post', 
+      body: { 
+        username: username,
+        password: 'password'
+      }
+    };
+    remote.request(r, function (err, response) {
+      assert.equal(err, null);
+      remote.request(r, function(err, response) {
+        assert(err != null);
+        done();
+      });
+    });
+  });
+
 });

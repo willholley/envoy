@@ -8,7 +8,7 @@ var assert = require('assert'),
 
 describe('bulk_docs', function () {
   it('bulk_docs with server assigned ids', function () {
-    this.timeout(10000);
+
     var docCount = 5,
       docs = testUtils.makeDocs(docCount),
       remote = null;
@@ -30,7 +30,7 @@ describe('bulk_docs', function () {
   });
 
   it('bulk_docs with user assigned ids', function () {
-    this.timeout(10000);
+
     var docCount = 2;
     var docs = testUtils.makeDocs(docCount),
       remote = null;
@@ -55,7 +55,7 @@ describe('bulk_docs', function () {
   });
 
   it('bulk_docs with both user and server assigned ids', function () {
-    this.timeout(10000);
+
     var docCount = 2;
     var docs = testUtils.makeDocs(docCount),
     remote = null;
@@ -73,4 +73,22 @@ describe('bulk_docs', function () {
     });
   });
  
+  it('POST /db/_bulk_docs with bad docs parameter', function (done) {
+    var remote = null;
+    testUtils.createUser().then(function(remoteURL){
+      remote = new PouchDB(remoteURL);
+      var request = require('request');
+      var r = {
+        method: 'post',
+        url: remoteURL + '/_bulk_docs',
+        body: ['a'],
+        json: true
+      };
+      request(r, function(err, data, body) {
+        assert.equal(data.statusCode, 400);
+        done();
+      });
+    });
+  });
+
 });

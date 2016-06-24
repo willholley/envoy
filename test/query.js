@@ -8,8 +8,6 @@ var assert = require('assert'),
   remoteURL = null,
   remote = null;
 
-
-
 describe('query', function () {
   
   before(function() {
@@ -41,8 +39,6 @@ describe('query', function () {
         // check that our query worked (docs with i > 5)
         assert(doc.i > 5);
         
-        // ensure we have stripped auth information
-        assert(typeof doc[app.metaKey] === 'undefined');
       });
       done();
     });

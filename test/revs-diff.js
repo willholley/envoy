@@ -8,7 +8,7 @@ var assert = require('assert'),
 
 describe('revsDiff', function () {
   it('single user', function () {
-    this.timeout(10000);
+
     var docCount = 1,
       docs = testUtils.makeDocs(docCount),
       remote = null,
@@ -48,7 +48,7 @@ describe('revsDiff', function () {
   });
 
   it('multiple users', function () {
-    this.timeout(10000);
+
     var docCount = 1,
       docs = testUtils.makeDocs(docCount),
       docs2 = testUtils.makeDocs(docCount),
@@ -94,5 +94,21 @@ describe('revsDiff', function () {
     }).catch(function(x) {
       console.log("X",x);
     });;
+  });
+
+  it('bad revs_diff request user', function (done) {
+    testUtils.createUser().then(function(remoteURL){
+      var request = require('request');
+      var r = {
+        url: remoteURL + '/_revs_diff',
+        method: 'post',
+        body:{docs:{}},
+        json:true
+      };
+      request(r, function(err, resp, body) {
+        assert.equal(resp.statusCode, 500);
+        done();
+      });
+    });
   });
 });

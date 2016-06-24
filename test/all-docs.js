@@ -6,12 +6,11 @@ var assert = require('assert'),
   PouchDB = require('pouchdb'),
   chance = require('chance')();
 
-describe('all_docs', function () {
+describe('GET all_docs', function () {
   it('GET /db/_all_docs with no parameters', function () {
     
     // create two users, one who has 5 docs, the other 10, in the
     // the same database. Ensure that each user gets only their own data
-    this.timeout(10000);
     var docCount = 5,
       docs = testUtils.makeDocs(docCount),
       docs2 = testUtils.makeDocs(docCount*2),
@@ -69,7 +68,6 @@ describe('all_docs', function () {
     
     // create two users, one who has 5 docs, the other 10, in the
     // the same database. Ensure that each user gets only their own data
-    this.timeout(10000);
     var docCount = 5,
       docs = testUtils.makeDocs(docCount),
       docs2 = testUtils.makeDocs(docCount*2),
@@ -124,8 +122,7 @@ describe('all_docs', function () {
   });
   
   it('GET /db/_all_docs with keys parameters', function () {
-    this.timeout(10000);
-    var docCount = 5,
+      var docCount = 5,
       docs = testUtils.makeDocs(docCount),
       remote = null;
       
@@ -162,7 +159,6 @@ describe('all_docs', function () {
   });
   
   it('GET /db/_all_docs with keys and include_docs=true', function () {
-    this.timeout(10000);
     var docCount = 5,
       docs = testUtils.makeDocs(docCount),
       remote = null;

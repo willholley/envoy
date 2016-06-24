@@ -20,7 +20,7 @@
     "start": "node ./bin/www",
     "jshint": "jshint -c .jshintrc lib/",
     "mocha": "./node_modules/.bin/mocha test -t 20000",
-    "coverage": "./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- -t 20000",
+    "coverage": "./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- -t 30000",
     "test": "bash scripts/run_couchdb_on_travis.sh; npm run mocha"
   },
   "dependencies": {
@@ -35,6 +35,7 @@
     "express": "^4.13.3",
     "express-session": "^1.13.0",
     "morgan": "^1.6.1",
+    "request": "^2.72.0",
     "underscore": "^1.8.3",
     "uuid": "^2.0.2"
   },

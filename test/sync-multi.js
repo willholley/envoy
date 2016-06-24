@@ -20,7 +20,7 @@ describe('two way sync', function () {
   });
 
   it('ensure no conflicts arise for push pull sync', function () {
-    this.timeout(20000);
+
 
     var local = new PouchDB(dbs.local);
     var remote = null;
@@ -49,7 +49,6 @@ describe('two way sync', function () {
   });
   
   it('ensure no conflicts arise for pull push sync', function () {
-    this.timeout(20000);
 
     var local = new PouchDB(dbs.local);
     var remote = null;
