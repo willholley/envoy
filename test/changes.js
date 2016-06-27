@@ -56,7 +56,7 @@ describe('changes', function () {
     }).then(function(r) {
       assert(false);
     }).catch(function(e) {
-      assert.equal(e.status, 401);
+      assert.equal(e.status, 403);
     });
   });
 

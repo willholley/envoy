@@ -15,6 +15,7 @@ describe('environment variable tests - Bluemix mode', function(done) {
       '@thehost.cloudant.com"}}]}';
     process.env.PORT = '8080';
     process.env.MBAAS_DATABASE_NAME = 'mydb';
+    delete process.env.COUCH_HOST;
     done();
   });
 
@@ -112,13 +113,12 @@ describe('environment variable tests - Piecemeal mode', function() {
   });
 
   // try missing PORT value
-  it('throw exception when missing PORT', function(done) {
+  it('defaults to 8000 when missing PORT', function(done) {
     process.env.COUCH_HOST = 'https://thehost';
     process.env.MBAAS_DATABASE_NAME = 'mydb';
     delete process.env.PORT;
-    assert.throws( function() {
-      env.getCredentials();
-    });
+    var e = env.getCredentials();
+    assert.equal(e.port, 8000);
     done();
   });
 

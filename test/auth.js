@@ -64,7 +64,31 @@ describe('auth', function() {
       request(r, function(err, resp, data) {
         assert.equal(err, null);
         assert.equal(resp.statusCode, 200);
-        done();
+
+        // now call /_auth to see if we are logged in
+        var r = {
+          method: 'get',
+          url: badurl1 + '/_auth',
+          jar: true
+        };   
+        request(r, function(err, resp, data) {
+          assert.equal(err, null);
+          assert.equal(resp.statusCode, 200);
+
+          // now call /_logout to clear the session
+          var r = {
+            method: 'get',
+            url: badurl1 + '/_logout',
+            jar: true
+          };   
+          request(r, function(err, resp, data) {
+            assert.equal(err, null);
+            assert.equal(resp.statusCode, 200);
+            done();
+          });
+
+        });
+
       });
     });
   });
@@ -77,7 +101,7 @@ describe('auth', function() {
     };
     request(r, function(err, resp, data) {
       assert.equal(err, null);
-      assert.equal(resp.statusCode, 401);
+      assert.equal(resp.statusCode, 403);
       done();
     });
   });
@@ -90,7 +114,7 @@ describe('auth', function() {
     };
     request(r, function(err, resp, data) {
       assert.equal(err, null);
-      assert.equal(resp.statusCode, 401);
+      assert.equal(resp.statusCode, 403);
       done();
     });
   });
@@ -103,7 +127,7 @@ describe('auth', function() {
     };
     request(r, function(err, resp, data) {
       assert.equal(err, null);
-      assert.equal(resp.statusCode, 401);
+      assert.equal(resp.statusCode, 403);
       done();
     });
   });
@@ -116,7 +140,7 @@ describe('auth', function() {
     };
     request(r, function(err, resp, data) {
       assert.equal(err, null);
-      assert.equal(resp.statusCode, 401);
+      assert.equal(resp.statusCode, 403);
       done();
     });
   });
