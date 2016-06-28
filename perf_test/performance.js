@@ -8,7 +8,7 @@ var PouchDB = require('pouchdb'),
 // These tests depend on publically replicable databases at
 // https://willholley-pouchdb.cloudant.com/
 describe('performance', function() {
-  this.timeout(120000);
+  this.timeout(1200000);
 
   describe('test single user sync', function () {
     var dbs = {};
@@ -24,7 +24,7 @@ describe('performance', function() {
     it('pull replication', function () {
       var remoteURL = testUtils.url('test', 'password');
       var local = new PouchDB(dbs.local);
-      var remote = new PouchDB(remoteURL);
+      var remote = new PouchDB(remoteURL, {ajax: {timeout: 1200000}});
 
       return local.replicate.from(remote)
         .then(function (info) {
