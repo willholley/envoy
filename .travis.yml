@@ -29,5 +29,13 @@ env:
   - COMMAND=perf ENVOY_ACCESS="id" MBAAS_DATABASE_NAME='perftest_1_user'
   - COMMAND=perf ENVOY_ACCESS="id" MBAAS_DATABASE_NAME='perftest_100_user'
   - COMMAND=perf ENVOY_ACCESS="id" MBAAS_DATABASE_NAME='perftest_1000_user'
+  - COMMAND=perf ENVOY_ACCESS="id" MBAAS_DATABASE_NAME='perftest_10000_user'
 
+matrix:
+  allow_failures:
+  - env: COMMAND=perf ENVOY_ACCESS="id" MBAAS_DATABASE_NAME='perftest_1_user'
+  - env: COMMAND=perf ENVOY_ACCESS="id" MBAAS_DATABASE_NAME='perftest_100_user'
+  - env: COMMAND=perf ENVOY_ACCESS="id" MBAAS_DATABASE_NAME='perftest_1000_user'
+  - env: COMMAND=perf ENVOY_ACCESS="id" MBAAS_DATABASE_NAME='perftest_10000_user'
 
+  fast_finish: true
