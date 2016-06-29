@@ -31,7 +31,7 @@ describe('adduser', function () {
       assert.equal(typeof response.ok, 'boolean');
       assert.equal(response.ok, true);
       assert.equal(typeof response.id, 'string');
-      assert.equal(response.id, username);
+      assert(response.id.endsWith(username));
       done();
     });
   });
