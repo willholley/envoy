@@ -1,7 +1,7 @@
 'use strict';
 
-process.env.MBAAS_DATABASE_NAME = 
-  (process.env.MBAAS_DATABASE_NAME || 'mbaas') +
+process.env.ENVOY_DATABASE_NAME = 
+  (process.env.ENVOY_DATABASE_NAME || 'envoy') +
 	(new Date().getTime());
 
 // enable /_adduser endpoint

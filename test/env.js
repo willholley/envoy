@@ -14,7 +14,7 @@ describe('environment variable tests - Bluemix mode', function(done) {
       'cloudant.com","port":443,"url":"https://theusername:thepassword'+
       '@thehost.cloudant.com"}}]}';
     process.env.PORT = '8080';
-    process.env.MBAAS_DATABASE_NAME = 'mydb';
+    process.env.ENVOY_DATABASE_NAME = 'mydb';
     delete process.env.COUCH_HOST;
     done();
   });
@@ -29,17 +29,17 @@ describe('environment variable tests - Bluemix mode', function(done) {
     done();
   });
 
-  // assumes mbaas when missing process.env.MBAAS_DATABASE_NAME
-  it('missing MBAAS_DATABASE_NAME', function(done) {
-    delete process.env.MBAAS_DATABASE_NAME;
+  // assumes envoy when missing process.env.ENVOY_DATABASE_NAME
+  it('missing ENVOY_DATABASE_NAME', function(done) {
+    delete process.env.ENVOY_DATABASE_NAME;
     var e = env.getCredentials();
-    assert.equal(e.databaseName, 'mbaas');
+    assert.equal(e.databaseName, 'envoy');
     done();
   });
 
   // invalid VCAP_SERVICES json
   it('invalid VCAP_SERVICES JSON', function(done) {
-    process.env.MBAAS_DATABASE_NAME = 'mydb';
+    process.env.ENVOY_DATABASE_NAME = 'mydb';
     process.env.VCAP_SERVICES = '{"badjson}';
 
     assert.throws( function() {
@@ -51,7 +51,7 @@ describe('environment variable tests - Bluemix mode', function(done) {
 
   // valid VCAP_SERVICES json but no services
   it('valid VCAP_SERVICES JSON but no services', function(done) {
-    process.env.MBAAS_DATABASE_NAME = 'mydb';
+    process.env.ENVOY_DATABASE_NAME = 'mydb';
     process.env.VCAP_SERVICES = '{"someservice":[]}';
     assert.throws( function() {
       env.getCredentials();
@@ -62,7 +62,7 @@ describe('environment variable tests - Bluemix mode', function(done) {
 
   // valid VCAP_SERVICES json but no Cloudant service
   it('valid VCAP_SERVICES JSON but no Cloudant service', function(done) {
-    process.env.MBAAS_DATABASE_NAME = 'mydb';
+    process.env.ENVOY_DATABASE_NAME = 'mydb';
     process.env.VCAP_SERVICES = '{"cloudantNoSQLDB":[]}';
     assert.throws( function() {
       env.getCredentials();
@@ -87,7 +87,7 @@ describe('environment variable tests - Piecemeal mode', function() {
     originalEnv = Object.assign({}, process.env);
     process.env.COUCH_HOST = 'https://thehost';
     process.env.PORT = '8080';
-    process.env.MBAAS_DATABASE_NAME = 'mydb';
+    process.env.ENVOY_DATABASE_NAME = 'mydb';
     done();
   });
 
@@ -105,7 +105,7 @@ describe('environment variable tests - Piecemeal mode', function() {
   it('throw exception when missing ACCOUNT', function(done) {
     delete process.env.COUCH_HOST;
     process.env.PORT = '8080';
-    process.env.MBAAS_DATABASE_NAME = 'mydb';
+    process.env.ENVOY_DATABASE_NAME = 'mydb';
     assert.throws( function() {
       env.getCredentials();
     });
@@ -115,7 +115,7 @@ describe('environment variable tests - Piecemeal mode', function() {
   // try missing PORT value
   it('defaults to 8000 when missing PORT', function(done) {
     process.env.COUCH_HOST = 'https://thehost';
-    process.env.MBAAS_DATABASE_NAME = 'mydb';
+    process.env.ENVOY_DATABASE_NAME = 'mydb';
     delete process.env.PORT;
     var e = env.getCredentials();
     assert.equal(e.port, 8000);
@@ -125,7 +125,7 @@ describe('environment variable tests - Piecemeal mode', function() {
   // try invalid PORT value
   it('throw exception when non-numeric PORT', function(done) {
     process.env.COUCH_HOST = 'https://thehost';
-    process.env.MBAAS_DATABASE_NAME = 'mydb';
+    process.env.ENVOY_DATABASE_NAME = 'mydb';
     process.env.PORT = '49a';
     assert.throws(function() {
       env.getCredentials();

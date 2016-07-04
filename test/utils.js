@@ -40,7 +40,7 @@ testUtils.url = function(user, password) {
 };
 
 testUtils.uniqueUsername = function() {
-  return process.env.MBAAS_DATABASE_NAME + 'user' + userCount++;
+  return process.env.ENVOY_DATABASE_NAME + 'user' + userCount++;
 };
 
 testUtils.uniqueUserUrl = function() {

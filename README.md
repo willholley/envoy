@@ -27,7 +27,7 @@ Cloudant Envoy is a Node.js application on top of the Express.js framework. To i
 
 ```bash
 export PORT=8001
-export MBAAS_DATABASE_NAME='dbname'
+export ENVOY_DATABASE_NAME='dbname'
 export COUCH_HOST='https://key:passwd@account.cloudant.com'
 ```
 
@@ -37,7 +37,7 @@ After those variables are set, you can start the Envoy server with `npm start`. 
 
 * PORT - the port number Envoy will listen on. When running in Bluemix, Envoy detects the Cloud Foundry port assigned to this app automatically. When running locally, you'll need to provide your own e.g. `export PORT=8001`
 * COUCH_HOST - The URL of the Cloudant service to connected to. Not required in Bluemix, as the attached Cloudant service is detected automatically. `COUCH_HOST` is required when running locally e.g. `export COUCH_HOST='https://key:passwd@account.cloudant.com'`
-* MBAAS_DATABASE_NAME - the name of the Cloudant database to use. Defaults to `mbaas`
+* ENVOY_DATABASE_NAME - the name of the Cloudant database to use. Defaults to `envoy`
 * LOG_FORMAT - the type of logging to output. One of `combined`, `common`, `dev`, `short`, `tiny`, `off`. Defaults to `off`. (see https://www.npmjs.com/package/morgan)
 * DEBUG - see debugging section
 * ENVOY_AUTH - which authentication plugin to use. One of `default`, `couchdb_users`
