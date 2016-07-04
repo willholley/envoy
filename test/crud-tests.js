@@ -263,6 +263,27 @@ describe('CRUD', function () {
     })
   });
 
+  // make sure that if we call POST /db without and id and no id in the body
+  // that it doesn't create a doc with a Cloudant generated id
+  it("create a document with POST /db and no id in the body", function(done) {
+    var request = require('request');
+    var url = url1 + '/mbaas';
+    var r = {
+      method: 'post',
+      url: url,
+      body: {
+        a: 1
+      },
+      json: true
+    };
+    request(r, function(err, resp, body) {
+      assert.equal(resp.statusCode, 200);
+      // envoy generated ids have dashes in
+      assert(body.id.indexOf('-') > 0);
+      done();
+    })
+  });
+
   //  // User 1 creates a document. Verify that User 2 can't update it.
   //  // This test is problematic due to eventual consistency issues
   // it("users can not update each other's docs", function () { 
