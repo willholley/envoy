@@ -54,20 +54,59 @@ var onDelete = function(e) {
   });
 };
 
+var ms = function() {
+  return new Date().getTime();
+}
+
 var sync = function() {
+  var start = ms();
   var remote = new PouchDB(envoy + '/mbaas');
   $('#syncprogress').removeClass('hide');
   db.sync(remote).on('complete', function (info) {
     $('#syncprogress').addClass('hide');
-    Materialize.toast('Sync complete', 4000);
+    var t = (ms() - start)/1000;
+    Materialize.toast('Sync complete ('+ t + ')', 4000);
     renderList();
   }).on('error', function (err) {
     $('#syncprogress').addClass('hide');
     Materialize.toast('Sync error', 4000);
     console.log(err);
   });
-
 }
+
+var pull = function() {
+  var start = ms();
+  var remote = new PouchDB(envoy + '/mbaas');
+  $('#syncprogress').removeClass('hide');
+  db.replicate.from(remote).on('complete', function (info) {
+    $('#syncprogress').addClass('hide');
+    var t = (ms() - start)/1000;
+    Materialize.toast('Pull complete ('+ t + ')', 4000);
+    renderList();
+  }).on('error', function (err) {
+    $('#syncprogress').addClass('hide');
+    Materialize.toast('Pull error', 4000);
+    console.log(err);
+  });
+}
+
+var push = function() {
+  var start = ms();
+  var remote = new PouchDB(envoy + '/mbaas');
+  $('#syncprogress').removeClass('hide');
+  db.replicate.to(remote).on('complete', function (info) {
+    $('#syncprogress').addClass('hide');
+    var t = (ms() - start)/1000;
+    Materialize.toast('Push complete ('+ t + ')', 4000);
+    renderList();
+  }).on('error', function (err) {
+    $('#syncprogress').addClass('hide');
+    Materialize.toast('Push error', 4000);
+    console.log(err);
+  });
+}
+
+
 var renderList = function() {
   var fun = function(doc) {
     emit(doc.ts, null);
@@ -100,6 +139,8 @@ var checkLogin = function () {
   $.ajax(r).done(function (data) {
     $('#addformcontainer').removeClass('hide');
     $('.synclink').removeClass('hide');
+    $('.pushlink').removeClass('hide');    
+    $('.pulllink').removeClass('hide');
     $('.logoutlink').removeClass('hide');
     $('.loginlink').addClass('hide');
     $('.registerlink').addClass('hide');
@@ -113,7 +154,6 @@ var checkLogin = function () {
 };
 
 $(document).ready(function () {
-  $(".button-collapse").sideNav();
   console.log("ready");
   checkLogin();
 
