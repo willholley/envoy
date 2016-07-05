@@ -7,7 +7,7 @@
   /* global URL */
 
   // Cache name definitions
-  var cacheNameStatic = 'v1';
+  var cacheNameStatic = 'v1.1';
 
   var currentCacheNames = [ cacheNameStatic ];
 
@@ -21,6 +21,7 @@
     '/demo/js/login.js',
     '/demo/js/mustache.js',
     '/demo/js/register.js',
+    '/demo/js/pouchdb-envoy.js',
     'https://fonts.googleapis.com/icon?family=Material+Icons',
     'https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/fonts/roboto/Roboto-Regular.woff2',
     'https://fonts.gstatic.com/s/materialicons/v17/2fcrYFNaTjcS6g4U3t-Y5UEw0lE80llgEseQY3FEmqw.woff2',

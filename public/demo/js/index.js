@@ -58,51 +58,65 @@ var ms = function() {
   return new Date().getTime();
 }
 
+
+var pull = function(silent) {
+  var start = ms();
+  var remote = new PouchDB(envoy + '/mbaas');
+  if (!silent) {
+    $('#syncprogress').removeClass('hide');
+  }
+
+  return db.replicate.from(remote).on('complete', function (info) {
+    if (!silent) {
+      $('#syncprogress').addClass('hide');
+      var t = (ms() - start)/1000;
+      Materialize.toast('Pull complete ('+ t + ')', 4000);
+      renderList();
+    }
+  }).on('error', function (err) {
+    if (!silent) {
+      $('#syncprogress').addClass('hide');
+      Materialize.toast('Pull error', 4000);
+      console.log(err);
+    }
+  });
+}
+
+var push = function(silent) {
+  var start = ms();
+  var remote = new PouchDB(envoy + '/mbaas');
+  if (!silent) {
+    $('#syncprogress').removeClass('hide');
+  }
+
+  return db.replicate.to(remote).on('complete', function (info) {
+    if (!silent) {
+      $('#syncprogress').addClass('hide');
+      var t = (ms() - start)/1000;
+      Materialize.toast('Push complete ('+ t + ')', 4000);
+      renderList();
+    }
+
+  }).on('error', function (err) {
+    if (!silent) {
+      $('#syncprogress').addClass('hide');
+      Materialize.toast('Push error', 4000);
+      console.log(err);
+    }
+  });
+}
+
+
 var sync = function() {
   var start = ms();
   var remote = new PouchDB(envoy + '/mbaas');
   $('#syncprogress').removeClass('hide');
-  db.sync(remote).on('complete', function (info) {
-    $('#syncprogress').addClass('hide');
+
+  Promise.all([push(true),pull(true)]).then(function() {
     var t = (ms() - start)/1000;
     Materialize.toast('Sync complete ('+ t + ')', 4000);
+    $('#syncprogress').addClass('hide');
     renderList();
-  }).on('error', function (err) {
-    $('#syncprogress').addClass('hide');
-    Materialize.toast('Sync error', 4000);
-    console.log(err);
-  });
-}
-
-var pull = function() {
-  var start = ms();
-  var remote = new PouchDB(envoy + '/mbaas');
-  $('#syncprogress').removeClass('hide');
-  db.replicate.from(remote).on('complete', function (info) {
-    $('#syncprogress').addClass('hide');
-    var t = (ms() - start)/1000;
-    Materialize.toast('Pull complete ('+ t + ')', 4000);
-    renderList();
-  }).on('error', function (err) {
-    $('#syncprogress').addClass('hide');
-    Materialize.toast('Pull error', 4000);
-    console.log(err);
-  });
-}
-
-var push = function() {
-  var start = ms();
-  var remote = new PouchDB(envoy + '/mbaas');
-  $('#syncprogress').removeClass('hide');
-  db.replicate.to(remote).on('complete', function (info) {
-    $('#syncprogress').addClass('hide');
-    var t = (ms() - start)/1000;
-    Materialize.toast('Push complete ('+ t + ')', 4000);
-    renderList();
-  }).on('error', function (err) {
-    $('#syncprogress').addClass('hide');
-    Materialize.toast('Push error', 4000);
-    console.log(err);
   });
 }
 
