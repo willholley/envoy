@@ -19,7 +19,7 @@ exec('mkdir -p ' + testsDir, function () {
   process.on('exit', cleanup);
 });
 
-var app = require('../app');
+var app = require('../app')();
 
 // ensure server is started before running any tests
 before(function(done) {

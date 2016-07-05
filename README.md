@@ -10,10 +10,9 @@ Note: this is a proof of concept; it's not battle tested or supported in any way
 
 ## Installation
 
-
 ### Deploy to Bluemix
 
-he fastest way to deploy *Cloudant Envoy* to Bluemix is to click the **Deploy to Bluemix** button below.
+The fastest way to deploy *Cloudant Envoy* to Bluemix is to click the **Deploy to Bluemix** button below.
 
 [![Deploy to Bluemix](https://deployment-tracker.mybluemix.net/stats/34c200255dfd02ea539780bb433da951/button.svg)](https://bluemix.net/deploy?repository=https://github.com/cloudant-labs/envoy)
 
@@ -43,6 +42,51 @@ After those variables are set, you can start the Envoy server with `npm start`. 
 * ENVOY_AUTH - which authentication plugin to use. One of `default`, `couchdb_users`
 * ENVOY_ACCESS - which access control plugin to use. One of `default`, `id`, `meta`
 * PRODUCTION - when set to 'true', disables the `POST /_adduser` endpoint
+
+### Incorporating Envoy into your own app
+
+Cloudant envoy is published on [npm](https://www.npmjs.com/package/cloudant-envoy). You can install Envoy and run it from your own Node.js application very simply:
+
+```js
+    var envoy = require('cloudant-envoy')();
+```
+
+where it will pick up its configuration from environment variables. You may also pass in object to Envoy on startup with your runtime options e.g.:
+
+```js
+    var opts = {
+      couchHost: 'http://username:password@mycluster.cloudant.com',
+      databaseName: 'myenvoy',
+      port: 9000,
+      logFormat: 'dev',
+      production: true
+    };
+    var envoy = require('cloudant-envoy')(opts);
+    envoy.events.on('listening', function() {
+      console.log('[OK]  Server is up');
+    });
+```
+
+## Sessions
+
+By default Envoy uses the [Express Session](https://github.com/expressjs/session) session handler. This is an in-memory store and is only designed for test deployments. If you want to use any of the [compatible session stores](https://github.com/expressjs/session#compatible-session-stores) you may pass in a `sessionHandler` option at startup e.g.:
+
+```js
+    var session = require('express-session');
+    var RedisStore = require('connect-redis')(session);
+    var options = {
+      url: 'redis://127.0.0.1:6379/0'
+    };
+    var sessionHandler = session({
+      store: new RedisStore(options),
+      secret: 'oh my'
+    });
+    var opts = {
+      sessionHandler :sessionHandler,
+      port: 9000
+    };
+    var envoy = require('../envoy/app.js')(opts);
+```
 
 ## Debugging
 
