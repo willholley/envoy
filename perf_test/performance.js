@@ -2,11 +2,10 @@
 /* globals testUtils */
 
 var PouchDB = require('pouchdb'),
+  pouchdb_envoy = require('pouchdb-envoy'),
   assert = require('assert'),
   auth = require('../lib/auth');
 
-// These tests depend on publically replicable databases at
-// https://willholley-pouchdb.cloudant.com/
 describe('performance', function() {
   this.timeout(1200000);
 
@@ -27,6 +26,18 @@ describe('performance', function() {
       var remote = new PouchDB(remoteURL, {ajax: {timeout: 1200000}});
 
       return local.replicate.from(remote)
+        .then(function (info) {
+          assert.equal(info.docs_written, 100);
+        });
+    });
+
+    it('pull replication with pouchdb-envoy', function () {
+      var remoteURL = testUtils.url('test', 'password');
+      PouchDB.plugin(pouchdb_envoy);
+      var remote = new PouchDB(remoteURL, {ajax: {timeout: 1200000}});
+      var local = new PouchDB(dbs.local);
+
+      return local.pull(remote)
         .then(function (info) {
           assert.equal(info.docs_written, 100);
         });
