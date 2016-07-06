@@ -66,14 +66,14 @@ var pull = function(silent) {
     $('#syncprogress').removeClass('hide');
   }
 
-  return db.replicate.from(remote).on('complete', function (info) {
+  return db.pull(remote).then(function (info) {
     if (!silent) {
       $('#syncprogress').addClass('hide');
       var t = (ms() - start)/1000;
       Materialize.toast('Pull complete ('+ t + ')', 4000);
       renderList();
     }
-  }).on('error', function (err) {
+  }).catch( function (err) {
     if (!silent) {
       $('#syncprogress').addClass('hide');
       Materialize.toast('Pull error', 4000);
@@ -89,7 +89,7 @@ var push = function(silent) {
     $('#syncprogress').removeClass('hide');
   }
 
-  return db.replicate.to(remote).on('complete', function (info) {
+  return db.push(remote).then(function (info) {
     if (!silent) {
       $('#syncprogress').addClass('hide');
       var t = (ms() - start)/1000;
@@ -97,7 +97,7 @@ var push = function(silent) {
       renderList();
     }
 
-  }).on('error', function (err) {
+  }).catch(function (err) {
     if (!silent) {
       $('#syncprogress').addClass('hide');
       Materialize.toast('Push error', 4000);
