@@ -55,7 +55,7 @@ After those variables are set, you can start the Envoy server with `npm start`. 
 * ENVOY_DATABASE_NAME - the name of the Cloudant database to use. Defaults to `envoy`
 * LOG_FORMAT - the type of logging to output. One of `combined`, `common`, `dev`, `short`, `tiny`, `off`. Defaults to `off`. (see https://www.npmjs.com/package/morgan)
 * DEBUG - see debugging section
-* ENVOY_AUTH - which authentication plugin to use. One of `default`, `couchdb_users`
+* ENVOY_AUTH - which authentication plugin to use. One of `default`, `couchdb_user`
 * ENVOY_ACCESS - which access control plugin to use. One of `default`, `id`, `meta`
 * PRODUCTION - when set to 'true', disables the `POST /_adduser` endpoint
 
