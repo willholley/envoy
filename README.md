@@ -8,7 +8,7 @@ Note: this is beta; it's not battle tested or supported in any way. If you find 
 
 ## Introduction
 
-Cloudant Envoy is a microservice that acts as a replication target for your [PouchDB](https://pouchdb.com/) web app or [Cloudant Sync](https://cloudant.com/product/cloudant-features/sync/)-based native app. Enboy allows your client side code can adopt a "one database per user" design pattern, with a copy of a user's data stored on the mobile device and synced to the cloud when online, while invisibly storing all the users' data in one large database. This prevents the proliferation of database that occurs as users are added and facilitates simpler backup and server-side reporting.
+Cloudant Envoy is a microservice that acts as a replication target for your [PouchDB](https://pouchdb.com/) web app or [Cloudant Sync](https://cloudant.com/product/cloudant-features/sync/)-based native app. Envoy allows your client side code can adopt a "one database per user" design pattern, with a copy of a user's data stored on the mobile device and synced to the cloud when online, while invisibly storing all the users' data in one large database. This prevents the proliferation of database that occurs as users are added and facilitates simpler backup and server-side reporting.
 
 Envoy implements a subset of the CouchDB API and can be used as a replication target for PouchDB or Cloudant Sync, or used with custom replicators such as [pouchdb-envoy](https://www.npmjs.org/package/pouchdb-envoy). 
 
