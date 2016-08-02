@@ -14,6 +14,35 @@ Envoy implements a subset of the CouchDB API and can be used as a replication ta
 
 Envoy includes a demo web app (hosted at the `/demo/` path) which demonstrates how a basic offline-first, progressive web app can be deployed that scales easily as users are added.
 
+### Why Cloudant Envoy?
+
+Database-per-user is a common pattern with CouchDB when there is a requirement for each application user to have their own set of documents which can be synced (e.g. to a mobile device or browser). On the surface, this is a good solution - Cloudant handles a large number of databases within a single installation very well. However, there are some problems:
+
+ 1. Querying data across many databases (e.g. for analytics) can be difficult. Cloudant does not have native support for a cross-database query and aggregating the data into a single database using e.g. replication can be resource intensive or require manual scheduling.
+ 2. There is a high management cost of many (thousands of) databases. Consider backup, replication in cross-region scenarios, design document management. These all require coordination / resource management outside of Cloudant.
+
+Envoy aims to work around these problems by emulating database-per-user using a single backend database and a proxy.
+
+### When should I consider Envoy instead of a db-per-user pattern?
+
+ * you want to perform queries across all per-user databases.
+ * you want to replicate all user data to a remote target (e.g. another Cloudant account or IBM dashDB).
+ * you want to take advantage of additional HTTP features (e.g. compression) that are not natively supported by Cloudant.
+
+### When should I consider Envoy instead of a single database with filtered replication?
+
+Cloudant Envoy is essentially performing a filtered replication under the hood (using the new Mango/Erlang native filtering supported in CouchDB 2.0). However, you may want to consider it if:
+
+ * you do not want to give all users read/write access to other users data.
+ * you want to take advantage of additional HTTP features (e.g. compression) that are not natively supported by Cloudant.
+
+### TODO / known limitations
+
+ * attachment support
+ * multipart requests
+ * document ownership is non-transferable (essentially the same as db per user)
+ * _design documents cannot be created through the proxy (they will get saved as normal documents)
+
 ## Installation
 
 ### Via npm
