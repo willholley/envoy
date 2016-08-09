@@ -2,7 +2,9 @@
 
 module.exports = function(opts) {
   var express = require('express'), 
+    fs = require('fs'),
     app = module.exports = express(),
+    http2 = require('http2'),
     compression = require('compression'),
     session = require('express-session'),
     Cloudant = require('cloudant'),
@@ -86,7 +88,12 @@ module.exports = function(opts) {
       res.status(500).send('Something broke!');
     });
 
-    app.listen(app.opts.port);
+    var options = {
+      key: fs.readFileSync('./key.pem'),
+      cert: fs.readFileSync('./server.crt')
+    };
+    http2.createServer(options, app)
+      .listen(app.opts.port);
   }
 
   // Make sure that any init stuff is executed before

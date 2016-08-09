@@ -36,7 +36,8 @@
     "express-session": "^1.13.0",
     "morgan": "^1.6.1",
     "request": "^2.72.0",
-    "uuid": "^2.0.2"
+    "uuid": "^2.0.2",
+    "http2": "^3.3.4"
   },
   "devDependencies": {
     "chance": "^1.0.3",
