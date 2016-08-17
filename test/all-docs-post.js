@@ -2,6 +2,7 @@
 /* globals testUtils */
 
 var assert = require('assert'),
+  app = require('../app'),
   auth = require('../lib/auth'),
   PouchDB = require('pouchdb'),
   chance = require('chance')();
@@ -26,7 +27,7 @@ describe('POST /all_docs', function () {
 
     return testUtils.createUser().then(function(remoteURL){
       remote = new PouchDB(remoteURL);
-      url1 = remoteURL.replace(/\/[a-z]+$/,'');
+      url1 = remoteURL.replace(/\/[a-z0-9]+$/,'');
       return remote.bulkDocs(docs);
     }).then(function (response) {
       res1 = response;
@@ -37,7 +38,7 @@ describe('POST /all_docs', function () {
       return testUtils.createUser();
     }).then(function(remoteURL2) {
       remote2 = new PouchDB(remoteURL2);
-      url2 = remoteURL2.replace(/\/[a-z]+$/,'');
+      url2 = remoteURL2.replace(/\/[a-z0-9]+$/,'');
       return remote2.bulkDocs(docs2);
     })
     
@@ -47,7 +48,7 @@ describe('POST /all_docs', function () {
     var cloudant = require('cloudant')(url1);
     var r = {
       method: 'post',
-      db: 'mbaas',
+      db: app.dbName,
       path: '_all_docs'
     }
     cloudant.request(r, function(err,data) {
@@ -77,7 +78,7 @@ describe('POST /all_docs', function () {
     var cloudant = require('cloudant')(url1);
     var r = {
     method: 'post',
-    db: 'mbaas',
+    db: app.dbName,
     path: '_all_docs',
     body: { keys: keys}
     }

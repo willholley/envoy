@@ -1,6 +1,7 @@
 'use strict';
 
 var request = require('request'),
+  app = require('../app'),
   assert = require('assert');
 
 describe('auth', function() {
@@ -34,7 +35,7 @@ describe('auth', function() {
 
   before(function () {
     return testUtils.createUser().then(function(remoteURL){
-       url1 = remoteURL.replace(/\/[a-z]+$/,'');
+       url1 = remoteURL.replace(/\/[a-z0-9]+$/,'');
        badurl1 = authmod(url1, 'all');
        badurl2 = authmod(url1, 'password');
        badurl3 = authmod(url1, 'username');
@@ -48,7 +49,7 @@ describe('auth', function() {
   it('session login', function(done) {
     var r = {
       method: 'get',
-      url: url1 + '/mbaas/_all_docs',
+      url: url1 + '/'+ app.dbName +  '/_all_docs',
       jar: true
     };
     request(r, function(err, resp, data) {
@@ -58,7 +59,7 @@ describe('auth', function() {
       // because of cookies
       var r = {
         method: 'get',
-        url: badurl1 + '/mbaas/_all_docs',
+        url: badurl1 + '/'+ app.dbName +  '/_all_docs',
         jar: true
       };   
       request(r, function(err, resp, data) {
@@ -97,7 +98,7 @@ describe('auth', function() {
   it('access denied with no credentials', function(done) {
     var r = {
       method: 'get',
-      url: badurl1 + '/mbaas/_all_docs'
+      url: badurl1 + '/'+ app.dbName +  '/_all_docs'
     };
     request(r, function(err, resp, data) {
       assert.equal(err, null);
@@ -110,7 +111,7 @@ describe('auth', function() {
   it('access denied with bad password', function(done) {
     var r = {
       method: 'get',
-      url: badurl2 + '/mbaas/_all_docs'
+      url: badurl2 + '/'+ app.dbName +  '/_all_docs'
     };
     request(r, function(err, resp, data) {
       assert.equal(err, null);
@@ -123,7 +124,7 @@ describe('auth', function() {
   it('access denied with bad username', function(done) {
     var r = {
       method: 'get',
-      url: badurl3 + '/mbaas/_all_docs'
+      url: badurl3 + '/'+ app.dbName +  '/_all_docs'
     };
     request(r, function(err, resp, data) {
       assert.equal(err, null);
@@ -136,7 +137,7 @@ describe('auth', function() {
   it('access denied with empty credentials', function(done) {
     var r = {
       method: 'get',
-      url: badurl4 + '/mbaas/_all_docs'
+      url: badurl4 + '/'+ app.dbName + '/_all_docs'
     };
     request(r, function(err, resp, data) {
       assert.equal(err, null);

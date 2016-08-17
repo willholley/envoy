@@ -14,13 +14,13 @@ describe('cors', function () {
   
   before(function() {
     return testUtils.createUser().then(function(url){
-      url = url.replace(/\/[a-z]+$/,'');
+      url = url.replace(/\/[a-z0-9]+$/,'');
       var headers = {
         origin: fakedomain,
         'Access-Control-Request-Headers': fakeacl
       }
       cloudant = require('cloudant')({url: url, requestDefaults: { headers: headers }});
-      remote = cloudant.db.use('mbaas');
+      remote = cloudant.db.use(app.dbName);
       remoteURL = url;
     });
   });

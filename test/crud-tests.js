@@ -15,7 +15,7 @@ describe('CRUD', function () {
   
   before(function() {
     return testUtils.createUser(2).then(function(urls){
-      url1=urls[0].replace(/\/[a-z]+$/,'');
+      url1=urls[0].replace(/\/[a-z0-9]+$/,'');
       remoteBob = new PouchDB(urls[0]);
       remoteRita = new PouchDB(urls[1]);      
     });
@@ -216,7 +216,7 @@ describe('CRUD', function () {
 
   it("update a document with POST /db", function(done) {
     var cloudant = require('cloudant')(url1);
-    var db = cloudant.db.use('mbaas');
+    var db = cloudant.db.use(app.dbName);
     var doc = { a:1}
 
     db.insert(doc, function(err, data) {
@@ -233,7 +233,7 @@ describe('CRUD', function () {
 
   it("update a document with bad POST /db", function(done) {
     var cloudant = require('cloudant')(url1);
-    var db = cloudant.db.use('mbaas');
+    var db = cloudant.db.use(app.dbName);
     var doc = { _bad:1}
 
     db.insert(doc, function(err, data) {
@@ -246,7 +246,7 @@ describe('CRUD', function () {
   it("update a document with POST /db/:id and id in the body", function(done) {
     var request = require('request');
     var testid = 'newid';
-    var url = url1 + '/mbaas/' + testid;
+    var url = url1 + '/' + app.dbName + '/' + testid;
     var r = {
       method: 'post',
       url: url,
@@ -267,7 +267,7 @@ describe('CRUD', function () {
   // that it doesn't create a doc with a Cloudant generated id
   it("create a document with POST /db and no id in the body", function(done) {
     var request = require('request');
-    var url = url1 + '/mbaas';
+    var url = url1 + '/' + app.dbName;
     var r = {
       method: 'post',
       url: url,

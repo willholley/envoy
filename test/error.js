@@ -30,5 +30,20 @@ describe('query', function () {
       done();
     });
   });
+
+  it('visit _session, should be 404', function (done) {
+    // Cloudant "/db/_find"
+    var r = { 
+      url: '_session', 
+      method: 'get'
+    };
+    remote.request(r, function (err, response) {
+      assert.equal(typeof response, 'undefined');
+      assert.equal(typeof err, 'object');
+      assert.equal(typeof err.status, 'number');
+      assert.equal(err.status, 404);
+      done();
+    });
+  });
   
 });

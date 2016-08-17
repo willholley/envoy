@@ -35,7 +35,7 @@ testUtils.url = function(user, password) {
     protocol: 'http',
     auth: user + ':' + password,
     host: e.url,
-    pathname: 'mbaas'
+    pathname: app.dbName
   });
 };
 

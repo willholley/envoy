@@ -7,7 +7,6 @@ module.exports = function(opts) {
     session = require('express-session'),
     Cloudant = require('cloudant'),
     bodyParser = require('body-parser'),
-    router = require('./lib/routes/index'),
     async = require('async'),
     init = require('./lib/init'),
     events = require('events'),
@@ -40,12 +39,14 @@ module.exports = function(opts) {
       saveUninitialized: true
     }));
   }
-
-
+  
   // Setup the logging format
   if (app.opts.logFormat !== 'off') {
     app.use(morgan(app.opts.logFormat));
   }
+
+  // load the routes
+  var router = require('./lib/routes/index');
 
   function main() {
     

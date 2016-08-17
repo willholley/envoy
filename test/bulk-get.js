@@ -2,6 +2,7 @@
 /* globals testUtils */
 
 var assert = require('assert'),
+  app = require('../app'),
   auth = require('../lib/auth'),
   PouchDB = require('pouchdb');
 
@@ -16,7 +17,7 @@ describe('bulk_get', function () {
     var docs = testUtils.makeDocs(docCount);
     return testUtils.createUser().then(function(remoteURL){
       remote = new PouchDB(remoteURL);
-      url = remoteURL.replace(/\/[a-z]+$/,'');
+      url = remoteURL.replace(/\/[a-z0-9]+$/,'');
       return remote.bulkDocs(docs);
     }).then(function(r) {
       resp = r;
@@ -27,7 +28,7 @@ describe('bulk_get', function () {
     var cloudant = require('cloudant')(url);
     var r = {
       method: 'get',
-      db: 'mbaas',
+      db: app.dbName,
       path: '_bulk_get'
     };
     cloudant.request(r, function(err, data) { 
