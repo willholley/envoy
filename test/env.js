@@ -15,6 +15,7 @@ describe('environment variable tests - Bluemix mode', function(done) {
       '@thehost.cloudant.com"}}]}';
     process.env.PORT = '8080';
     process.env.ENVOY_DATABASE_NAME = 'mydb';
+    process.env.ENVOY_STATIC = 'public';
     delete process.env.COUCH_HOST;
     done();
   });
@@ -26,6 +27,7 @@ describe('environment variable tests - Bluemix mode', function(done) {
       'https://theusername:thepassword@theusername.cloudant.com');
     assert.equal(e.databaseName, 'mydb');
     assert.equal(e.port, 8080);
+    assert.equal(e.static, 'public');
     done();
   });
 

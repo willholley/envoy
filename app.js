@@ -45,15 +45,17 @@ module.exports = function(opts) {
     app.use(morgan(app.opts.logFormat));
   }
 
-  // load the routes
-  var router = require('./lib/routes/index');
 
   function main() {
     
-    if (!app.opts.production || app.opts.production === 'true') {
+    var production = (app.opts.production && app.opts.production === 'true');
+    if (app.opts.static) {
+      console.log('[OK]  Serving out directory: ' + app.opts.static);
+      app.use('/', express.static(app.opts.static)); 
+    } else if (!production) {
       // setup static public directory
       app.use(express.static(__dirname + '/public')); 
-    }
+    } 
 
     // enable cors
     app.use(cors());   
@@ -64,6 +66,8 @@ module.exports = function(opts) {
     app.use(bodyParser.json({ limit: '50mb'}));
     app.use(bodyParser.urlencoded({ extended: false, limit: '50mb' }));
 
+    // load the routes
+    var router = require('./lib/routes/index');
     app.use('/', router);
 
     // Catch unknown paths

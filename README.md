@@ -87,6 +87,7 @@ After those variables are set, you can start the Envoy server with `npm start`. 
 * ENVOY_AUTH - which authentication plugin to use. One of `default`, `couchdb_user`
 * ENVOY_ACCESS - which access control plugin to use. One of `default`, `id`, `meta`
 * PRODUCTION - when set to 'true', disables the `POST /_adduser` endpoint
+* ENVOY_STATIC - when set to a full path, this directory is served out as static content from the Envoy express app.
 
 ## Using Envoy in your own app
 
@@ -125,6 +126,7 @@ By default Envoy uses the [Express Session](https://github.com/expressjs/session
 ```js
     var session = require('express-session');
     var RedisStore = require('connect-redis')(session);
+    var path = require('path');
     var options = {
       url: 'redis://127.0.0.1:6379/0'
     };
@@ -134,9 +136,10 @@ By default Envoy uses the [Express Session](https://github.com/expressjs/session
     });
     var opts = {
       sessionHandler :sessionHandler,
-      port: 9000
+      port: 9000,
+      static: path.join(__dirname, './public')
     };
-    var envoy = require('../envoy/app.js')(opts);
+    var envoy = require('cloudant-envoy')(opts);
 ```
 
 ## Debugging
