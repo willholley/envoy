@@ -136,10 +136,46 @@ By default Envoy uses the [Express Session](https://github.com/expressjs/session
     });
     var opts = {
       sessionHandler :sessionHandler,
+      port: 9000
+    };
+    var envoy = require('cloudant-envoy')(opts);
+```
+
+### Static files
+
+You can get Envoy to server out static files for you. Simply pass in a 'static' option or use the ENVOY_STATIC environment variable:
+
+```js
+    var opts = {
       port: 9000,
       static: path.join(__dirname, './public')
     };
     var envoy = require('cloudant-envoy')(opts);
+```
+
+### Custom routes
+
+You can supply your own custom routes to Envoy too:
+
+```js
+var express = require('express'),
+  router = express.Router();
+
+// my custom route
+router.get('/myroute', function(req, res) {
+  res.send({ok:true});
+});
+
+var opts = {
+    databaseName: dbName,
+    port: appEnv.port,
+    logFormat: 'dev',
+    production: true,
+    static: path.join(__dirname, './public'),
+    router: router
+};
+
+var envoy = require('envoy')(opts);
 ```
 
 ## Debugging
