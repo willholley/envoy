@@ -53,7 +53,7 @@ var makeUser = function() {
     var username = testUtils.uniqueUsername();
     var password = 'thepassword';
     var url = testUtils.url(username, password);
-    var x = auth.newUser(username, password, function(err, data) {
+    var x = auth.newUser(username, password, {}, function(err, data) {
       if (err) {
         return reject(err);
       }

@@ -27,6 +27,7 @@ module.exports = function(opts) {
   app.events = ee;
   app.cloudant = cloudant;
   app.serverURL = app.opts.couchHost;
+  app.auth = auth;
 
   // session support
   if (opts && opts.sessionHandler) {

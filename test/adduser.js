@@ -85,3 +85,19 @@ describe('adduser', function () {
   });
 
 });
+
+
+describe('adduser programmatically', function() {
+  it('create user', function() {
+    var username = testUtils.uniqueUsername();
+    var password = 'password';
+    var meta = {a:1, b:2};
+    app.auth.newUser(username, password, meta).then(function(data) {
+      return app.auth.getUser(username);
+    }).then(function(data) {
+      assert.equal(typeof data, 'object');
+      assert.equal(data.type, 'user');
+      assert.equal(JSON.stringify(data.meta), JSON.stringify(meta));
+    });
+  });
+});
