@@ -1,6 +1,6 @@
 # Cloudant Envoy (beta)
 
-[![Build Status](https://travis-ci.org/cloudant-labs/envoy.svg)](https://travis-ci.org/cloudant-labs/envoy.svg) [![npm version](https://badge.fury.io/js/cloudant-envoy.svg)](https://badge.fury.io/js/cloudant-envoy)
+[![Build Status](https://api.travis-ci.org/cloudant-labs/envoy.svg?branch=master)](https://api.travis-ci.org/cloudant-labs/envoy.svg?branch=master) [![npm version](https://badge.fury.io/js/cloudant-envoy.svg)](https://badge.fury.io/js/cloudant-envoy)
 
 ## Beta software
 
