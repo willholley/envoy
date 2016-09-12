@@ -4,7 +4,7 @@ module.exports = function(opts) {
   var express = require('express'), 
     fs = require('fs'),
     app = module.exports = express(),
-    http2 = require('http2'),
+    spdy = require('spdy'),
     compression = require('compression'),
     session = require('express-session'),
     Cloudant = require('cloudant'),
@@ -92,7 +92,7 @@ module.exports = function(opts) {
       key: fs.readFileSync('./key.pem'),
       cert: fs.readFileSync('./server.crt')
     };
-    http2.createServer(options, app)
+    spdy.createServer(options, app)
       .listen(app.opts.port);
   }
 
